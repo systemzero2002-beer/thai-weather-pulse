@@ -131,8 +131,8 @@
                     <p id="wind-val" class="text-sm font-bold text-emerald-100 mt-0.5">-- กม./ชม.</p>
                 </div>
                 <div class="bg-emerald-950/40 p-2 rounded-xl border border-emerald-800/30">
-                    <p class="text-[10px] text-emerald-300/70 flex items-center justify-center gap-1"><i data-lucide="cloud-rain" class="w-3 h-3"></i>โอกาสฝนรวม</p>
-                    <p id="rain-chance-val" class="text-sm font-bold text-emerald-400 mt-0.5">--%</p>
+                    <p class="text-[10px] text-emerald-300/70 flex items-center justify-center gap-1"><i data-lucide="cloud-rain" class="w-3 h-3"></i>ฝนจะตกใน</p>
+                    <p id="rain-countdown-val" class="text-xs font-bold text-emerald-400 mt-1">-- ชม.</p>
                 </div>
             </div>
         </div>
@@ -445,7 +445,6 @@
                     const hourly = data.hourly || {};
                     const timeArr = hourly.time || [];
                     
-                    // ป้องกันค่าว่างด้วย Fallback Array
                     const defaultProb = hourly.precipitation_probability || [];
                     const ecmwfArr = hourly.precipitation_probability_ecmwf_ifs025 || defaultProb;
                     const gfsArr = hourly.precipitation_probability_gfs_seamless || defaultProb;
@@ -470,14 +469,36 @@
                     document.getElementById('model-gfs-val').innerText = `${curGfs}%`;
                     document.getElementById('model-icon-val').innerText = `${curIcon}%`;
 
-                    let maxEnsembleRain = Math.round((curEcmwf * 0.5) + (curGfs * 0.25) + (curIcon * 0.25));
-                    document.getElementById('rain-chance-val').innerText = `${maxEnsembleRain}%`;
+                    // ค้นหาชั่วโมงแรกที่ฝนจะตกใน 20 ชั่วโมงข้างหน้า (โอกาสฝน > 30%)
+                    let rainInHours = -1;
+                    for (let i = startIndex; i < startIndex + 20 && i < timeArr.length; i++) {
+                        const pE = ecmwfArr[i] !== undefined ? ecmwfArr[i] : 0;
+                        const pG = gfsArr[i] !== undefined ? gfsArr[i] : 0;
+                        const pI = iconArr[i] !== undefined ? iconArr[i] : 0;
+                        const prob = Math.round((pE * 0.5) + (pG * 0.25) + (pI * 0.25));
+
+                        if (prob >= 30) {
+                            rainInHours = i - startIndex;
+                            break;
+                        }
+                    }
+
+                    const countdownEl = document.getElementById('rain-countdown-val');
+                    if (rainInHours === 0) {
+                        countdownEl.innerText = 'ฝนตกตอนนี้';
+                        countdownEl.className = 'text-xs font-bold text-amber-400 mt-1 animate-pulse';
+                    } else if (rainInHours > 0) {
+                        countdownEl.innerText = `อีก ${rainInHours} ชม.`;
+                        countdownEl.className = 'text-xs font-bold text-cyan-400 mt-1';
+                    } else {
+                        countdownEl.innerText = 'ไม่มีฝน 20 ชม.';
+                        countdownEl.className = 'text-[11px] font-bold text-emerald-300 mt-1';
+                    }
 
                     const hourlyContainer = document.getElementById('hourly-container');
                     hourlyContainer.innerHTML = '';
 
                     const thaiDays = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
-                    let maxPeakRain = 0;
 
                     for (let i = startIndex; i < startIndex + 20 && i < timeArr.length; i++) {
                         const rawTime = timeArr[i];
@@ -492,8 +513,6 @@
                         const pGfs = gfsArr[i] !== undefined ? gfsArr[i] : 0;
                         const pIcon = iconArr[i] !== undefined ? iconArr[i] : 0;
                         const ensembleProb = Math.round((pEcmwf * 0.5) + (pGfs * 0.25) + (pIcon * 0.25));
-
-                        if (isCurrentHour) maxPeakRain = ensembleProb;
 
                         const code = hourly.weather_code && hourly.weather_code[i] !== undefined ? hourly.weather_code[i] : 0;
                         const isDay = hourly.is_day && hourly.is_day[i] !== undefined ? hourly.is_day[i] : 1;
@@ -523,7 +542,6 @@
                         hourlyContainer.appendChild(card);
                     }
 
-                    document.getElementById('rain-chance-val').innerText = `${maxPeakRain}%`;
                     lucide.createIcons();
                 })
                 .catch(err => console.error("Error fetching weather:", err));
