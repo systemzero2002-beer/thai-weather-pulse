@@ -451,6 +451,7 @@
                     const gfsArr = hourly.precipitation_probability_gfs_seamless || defaultProb;
                     const iconArr = hourly.precipitation_probability_icon_seamless || defaultProb;
 
+                    // ดึงอาเรย์อุณหภูมิรายชั่วโมงจริงจาก API
                     const tempArr = hourly.temperature_2m || [];
 
                     const nowIsoString = new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' });
@@ -509,6 +510,7 @@
                         const hourNum = itemDate.getHours();
                         const hourFormatted = String(hourNum).padStart(2, '0') + ':00';
                         
+                        // ดึงอุณหภูมิรายชั่วโมงจริง (ถ้าเป็นช่องแรกใช้ค่าปัจจุบัน ถ้าไม่ใช่ดึงตามอาเรย์ชั่วโมงที่ i)
                         const temp = isCurrentHour ? Math.round(current.temperature_2m) : (tempArr[i] !== undefined ? Math.round(tempArr[i]) : Math.round(current.temperature_2m));
 
                         const pEcmwf = ecmwfArr[i] !== undefined ? ecmwfArr[i] : 0;
@@ -518,7 +520,6 @@
 
                         const code = isCurrentHour ? current.weather_code : (hourly.weather_code && hourly.weather_code[i] !== undefined ? hourly.weather_code[i] : 0);
                         
-                        // บังคับเช็คช่วงเวลากลางคืนจากตัวเลขชั่วโมงโดยตรง (06:00 - 18:00 เป็นกลางวัน, นอกนั้นกลางคืน)
                         let isDay = (hourNum >= 6 && hourNum <= 18) ? 1 : 0;
                         if (isCurrentHour) {
                             isDay = current.is_day;
