@@ -450,6 +450,9 @@
                     const gfsArr = hourly.precipitation_probability_gfs_seamless || defaultProb;
                     const iconArr = hourly.precipitation_probability_icon_seamless || defaultProb;
 
+                    // ดึงค่าอุณหภูมิรายชั่วโมงรองรับ Multi-Model (ใช้ temperature_2m ของ ECMWF หรือค่าหลัก)
+                    const tempArr = hourly.temperature_2m_ecmwf_ifs025 || hourly.temperature_2m || [];
+
                     const now = new Date();
                     const currentLocalHour = now.getHours();
                     
@@ -460,7 +463,6 @@
 
                     if (startIndex === -1) startIndex = 0;
 
-                    // แสดงค่าปัจจุบัน 3 โมเดล
                     const curEcmwf = ecmwfArr[startIndex] !== undefined ? ecmwfArr[startIndex] : 0;
                     const curGfs = gfsArr[startIndex] !== undefined ? gfsArr[startIndex] : 0;
                     const curIcon = iconArr[startIndex] !== undefined ? iconArr[startIndex] : 0;
@@ -469,7 +471,6 @@
                     document.getElementById('model-gfs-val').innerText = `${curGfs}%`;
                     document.getElementById('model-icon-val').innerText = `${curIcon}%`;
 
-                    // ค้นหาชั่วโมงแรกที่ฝนจะตกใน 20 ชั่วโมงข้างหน้า (โอกาสฝน > 30%)
                     let rainInHours = -1;
                     for (let i = startIndex; i < startIndex + 20 && i < timeArr.length; i++) {
                         const pE = ecmwfArr[i] !== undefined ? ecmwfArr[i] : 0;
@@ -507,7 +508,9 @@
 
                         const hourNum = itemDate.getHours();
                         const hourFormatted = hourNum.toString().padStart(2, '0') + ':00';
-                        const temp = hourly.temperature_2m && hourly.temperature_2m[i] !== undefined ? Math.round(hourly.temperature_2m[i]) : 0;
+                        
+                        // ดึงอุณหภูมิแต่ละชั่วโมงให้ถูกต้อง
+                        const temp = tempArr[i] !== undefined ? Math.round(tempArr[i]) : Math.round(current.temperature_2m);
 
                         const pEcmwf = ecmwfArr[i] !== undefined ? ecmwfArr[i] : 0;
                         const pGfs = gfsArr[i] !== undefined ? gfsArr[i] : 0;
