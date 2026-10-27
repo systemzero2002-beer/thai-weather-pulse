@@ -155,7 +155,7 @@
             </div>
         </div>
 
-        <!-- NEW: 5-Day Weather Forecast Section -->
+        <!-- 5-Day Weather Forecast Section -->
         <div class="bg-emerald-900/70 border border-emerald-800/70 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-3">
             <div class="flex items-center justify-between border-b border-emerald-800/60 pb-2">
                 <span class="text-xs font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -165,7 +165,6 @@
             </div>
 
             <div id="daily-container" class="space-y-2">
-                <!-- ข้อมูลจะถูกเติมด้วย JavaScript -->
                 <div class="bg-emerald-950/60 p-3 rounded-xl border border-emerald-800/40 text-center text-xs text-emerald-300 animate-pulse">
                     กำลังโหลดข้อมูลพยากรณ์ 5 วัน...
                 </div>
@@ -417,7 +416,6 @@
         }
 
         function fetchWeatherData(lat, lon) {
-            // เพิ่ม daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max เพื่อดึงข้อมูล 5 วัน
             const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FBangkok&forecast_days=5`;
 
             fetch(url)
@@ -469,7 +467,7 @@
                         countdownEl.className = 'text-[11px] font-bold text-emerald-300 mt-1';
                     }
 
-                    // เรนเดอร์พยากรณ์รายชั่วโมง 20 ชม.
+                    // พยากรณ์รายชั่วโมง
                     const hourlyContainer = document.getElementById('hourly-container');
                     hourlyContainer.innerHTML = '';
                     const thaiDays = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
@@ -481,7 +479,7 @@
 
                         const hourNum = itemDate.getHours();
                         const hourFormatted = String(hourNum).padStart(2, '0') + ':00';
-                        const temp = isCurrentHour ? Math.round(current.temperature_2m) : (tempArr[i] !== undefined ? Math.round(tempArr[i]) : Math.round(current.temperature_2m));
+                        const temp = tempArr[i] !== undefined ? Math.round(tempArr[i]) : Math.round(current.temperature_2m);
                         const ensembleProb = defaultProb[i] !== undefined ? defaultProb[i] : 0;
                         const code = isCurrentHour ? current.weather_code : (hourly.weather_code && hourly.weather_code[i] !== undefined ? hourly.weather_code[i] : 0);
                         
@@ -512,7 +510,7 @@
                         hourlyContainer.appendChild(card);
                     }
 
-                    // เรนเดอร์พยากรณ์อากาศ 5 วันล่วงหน้า (Daily Forecast)
+                    // พยากรณ์อากาศ 5 วันล่วงหน้า
                     const daily = data.daily || {};
                     const dailyContainer = document.getElementById('daily-container');
                     dailyContainer.innerHTML = '';
