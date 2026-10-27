@@ -408,8 +408,8 @@
         function getWeatherInfo(code, isDay = 1) {
             const weatherMap = {
                 0: { desc: 'ท้องฟ้าแจ่มใส', icon: isDay ? 'sun' : 'moon', color: isDay ? 'text-amber-400' : 'text-blue-300' },
-                1: { desc: 'ปลอดโปร่งเป็นส่วนใหญ่', icon: isDay ? 'cloud-sun' : 'cloud-moon', color: 'text-amber-300' },
-                2: { desc: 'มีเมฆบางส่วน', icon: isDay ? 'cloud-sun' : 'cloud-moon', color: 'text-sky-300' },
+                1: { desc: 'ปลอดโปร่งเป็นส่วนใหญ่', icon: isDay ? 'cloud-sun' : 'cloud-moon', color: isDay ? 'text-amber-300' : 'text-blue-300' },
+                2: { desc: 'มีเมฆบางส่วน', icon: isDay ? 'cloud-sun' : 'cloud-moon', color: isDay ? 'text-sky-300' : 'text-blue-300' },
                 3: { desc: 'มีเมฆมาก', icon: 'cloud', color: 'text-slate-300' },
                 45: { desc: 'มีหมอก', icon: 'cloud-fog', color: 'text-slate-300' },
                 48: { desc: 'มีหมอกหนา', icon: 'cloud-fog', color: 'text-slate-300' },
@@ -453,7 +453,6 @@
 
                     const tempArr = hourly.temperature_2m || [];
 
-                    // ค้นหาตำแหน่ง Index ของชั่วโมงปัจจุบันตามเวลาจริงของ API (Timezone Asia/Bangkok)
                     const nowIsoString = new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' });
                     const nowDate = new Date(nowIsoString);
                     const currentHourStr = nowDate.getFullYear() + '-' + 
@@ -507,7 +506,8 @@
                         const itemDate = new Date(rawTime.replace('T', ' '));
                         const isCurrentHour = (i === startIndex);
 
-                        const hourFormatted = String(itemDate.getHours()).padStart(2, '0') + ':00';
+                        const hourNum = itemDate.getHours();
+                        const hourFormatted = String(hourNum).padStart(2, '0') + ':00';
                         
                         const temp = isCurrentHour ? Math.round(current.temperature_2m) : (tempArr[i] !== undefined ? Math.round(tempArr[i]) : Math.round(current.temperature_2m));
 
@@ -517,7 +517,12 @@
                         const ensembleProb = Math.round((pEcmwf * 0.5) + (pGfs * 0.25) + (pIcon * 0.25));
 
                         const code = isCurrentHour ? current.weather_code : (hourly.weather_code && hourly.weather_code[i] !== undefined ? hourly.weather_code[i] : 0);
-                        const isDay = isCurrentHour ? current.is_day : (hourly.is_day && hourly.is_day[i] !== undefined ? hourly.is_day[i] : 1);
+                        
+                        // บังคับเช็คช่วงเวลากลางคืนจากตัวเลขชั่วโมงโดยตรง (06:00 - 18:00 เป็นกลางวัน, นอกนั้นกลางคืน)
+                        let isDay = (hourNum >= 6 && hourNum <= 18) ? 1 : 0;
+                        if (isCurrentHour) {
+                            isDay = current.is_day;
+                        }
                         
                         const wInfo = getWeatherInfo(code, isDay);
                         const iconName = wInfo.icon;
