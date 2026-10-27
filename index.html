@@ -137,7 +137,7 @@
             </div>
         </div>
 
-        <!-- NEW: Multi-Model Ensemble Comparison Section -->
+        <!-- Multi-Model Ensemble Comparison Section -->
         <div class="bg-emerald-900/70 border border-emerald-800/70 rounded-2xl p-3.5 shadow-xl backdrop-blur-sm space-y-2">
             <div class="flex items-center justify-between border-b border-emerald-800/60 pb-2">
                 <span class="text-xs font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -150,17 +150,17 @@
                 <div class="bg-emerald-950/60 p-2 rounded-xl border border-emerald-800/40">
                     <div class="text-[10px] font-bold text-emerald-300">ECMWF (ยุโรป)</div>
                     <div id="model-ecmwf-val" class="text-base font-extrabold text-amber-300 mt-0.5">--%</div>
-                    <div class="text-[9px] text-emerald-400/70 mt-0.5">ค่าน้ำหนัก 50%</div>
+                    <div class="text-[9px] text-emerald-400/70 mt-0.5">น้ำหนัก 50%</div>
                 </div>
                 <div class="bg-emerald-950/60 p-2 rounded-xl border border-emerald-800/40">
                     <div class="text-[10px] font-bold text-emerald-300">GFS (อเมริกา)</div>
                     <div id="model-gfs-val" class="text-base font-extrabold text-cyan-300 mt-0.5">--%</div>
-                    <div class="text-[9px] text-emerald-400/70 mt-0.5">ค่าน้ำหนัก 25%</div>
+                    <div class="text-[9px] text-emerald-400/70 mt-0.5">น้ำหนัก 25%</div>
                 </div>
                 <div class="bg-emerald-950/60 p-2 rounded-xl border border-emerald-800/40">
                     <div class="text-[10px] font-bold text-emerald-300">ICON (เยอรมนี)</div>
                     <div id="model-icon-val" class="text-base font-extrabold text-emerald-300 mt-0.5">--%</div>
-                    <div class="text-[9px] text-emerald-400/70 mt-0.5">ค่าน้ำหนัก 25%</div>
+                    <div class="text-[9px] text-emerald-400/70 mt-0.5">น้ำหนัก 25%</div>
                 </div>
             </div>
         </div>
@@ -427,9 +427,7 @@
             return weatherMap[code] || { desc: 'สภาพอากาศทั่วไป', icon: 'cloud' };
         }
 
-        // ดึงข้อมูล Multi-Model Ensemble สภาพอากาศ
         function fetchWeatherData(lat, lon) {
-            // เรียกใช้ Multi-Model API จาก ECMWF, GFS, ICON
             const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,weather_code,is_day&models=ecmwf_ifs025,gfs_seamless,icon_seamless&timezone=Asia%2FBangkok&forecast_days=3`;
 
             fetch(url)
@@ -444,57 +442,62 @@
                     document.getElementById('weather-desc').innerText = weatherMeta.desc;
                     document.getElementById('weather-main-icon').innerHTML = `<i data-lucide="${weatherMeta.icon}" class="w-10 h-10"></i>`;
 
-                    const hourly = data.hourly;
-                    const hourlyContainer = document.getElementById('hourly-container');
-                    hourlyContainer.innerHTML = '';
+                    const hourly = data.hourly || {};
+                    const timeArr = hourly.time || [];
+                    
+                    // ป้องกันค่าว่างด้วย Fallback Array
+                    const defaultProb = hourly.precipitation_probability || [];
+                    const ecmwfArr = hourly.precipitation_probability_ecmwf_ifs025 || defaultProb;
+                    const gfsArr = hourly.precipitation_probability_gfs_seamless || defaultProb;
+                    const iconArr = hourly.precipitation_probability_icon_seamless || defaultProb;
 
                     const now = new Date();
                     const currentLocalHour = now.getHours();
                     
-                    let startIndex = hourly.time.findIndex(timeStr => {
+                    let startIndex = timeArr.findIndex(timeStr => {
                         const itemDate = new Date(timeStr.replace('T', ' '));
                         return itemDate.getDate() === now.getDate() && itemDate.getHours() === currentLocalHour;
                     });
 
                     if (startIndex === -1) startIndex = 0;
 
-                    // ดึงค่าแยกรายโมเดล ECMWF / GFS / ICON
-                    const ecmwfArr = hourly.precipitation_probability_ecmwf_ifs025 || hourly.precipitation_probability || [];
-                    const gfsArr = hourly.precipitation_probability_gfs_seamless || hourly.precipitation_probability || [];
-                    const iconArr = hourly.precipitation_probability_icon_seamless || hourly.precipitation_probability || [];
-
-                    // แสดงค่า Multi-Model ชั่วขณะปัจจุบัน
-                    const curEcmwf = ecmwfArr[startIndex] || 0;
-                    const curGfs = gfsArr[startIndex] || 0;
-                    const curIcon = iconArr[startIndex] || 0;
+                    // แสดงค่าปัจจุบัน 3 โมเดล
+                    const curEcmwf = ecmwfArr[startIndex] !== undefined ? ecmwfArr[startIndex] : 0;
+                    const curGfs = gfsArr[startIndex] !== undefined ? gfsArr[startIndex] : 0;
+                    const curIcon = iconArr[startIndex] !== undefined ? iconArr[startIndex] : 0;
 
                     document.getElementById('model-ecmwf-val').innerText = `${curEcmwf}%`;
                     document.getElementById('model-gfs-val').innerText = `${curGfs}%`;
                     document.getElementById('model-icon-val').innerText = `${curIcon}%`;
 
-                    let maxEnsembleRain = 0;
-                    const thaiDays = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
+                    let maxEnsembleRain = Math.round((curEcmwf * 0.5) + (curGfs * 0.25) + (curIcon * 0.25));
+                    document.getElementById('rain-chance-val').innerText = `${maxEnsembleRain}%`;
 
-                    for (let i = startIndex; i < startIndex + 20 && i < hourly.time.length; i++) {
-                        const rawTime = hourly.time[i];
+                    const hourlyContainer = document.getElementById('hourly-container');
+                    hourlyContainer.innerHTML = '';
+
+                    const thaiDays = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
+                    let maxPeakRain = 0;
+
+                    for (let i = startIndex; i < startIndex + 20 && i < timeArr.length; i++) {
+                        const rawTime = timeArr[i];
                         const itemDate = new Date(rawTime.replace('T', ' '));
                         const isCurrentHour = (i === startIndex);
 
                         const hourNum = itemDate.getHours();
                         const hourFormatted = hourNum.toString().padStart(2, '0') + ':00';
-                        const temp = Math.round(hourly.temperature_2m[i]);
+                        const temp = hourly.temperature_2m && hourly.temperature_2m[i] !== undefined ? Math.round(hourly.temperature_2m[i]) : 0;
 
-                        // คำนวณค่าเฉลี่ย Ensemble Weighted Probability
-                        const pEcmwf = ecmwfArr[i] || 0;
-                        const pGfs = gfsArr[i] || 0;
-                        const pIcon = iconArr[i] || 0;
+                        const pEcmwf = ecmwfArr[i] !== undefined ? ecmwfArr[i] : 0;
+                        const pGfs = gfsArr[i] !== undefined ? gfsArr[i] : 0;
+                        const pIcon = iconArr[i] !== undefined ? iconArr[i] : 0;
                         const ensembleProb = Math.round((pEcmwf * 0.5) + (pGfs * 0.25) + (pIcon * 0.25));
 
-                        const code = hourly.weather_code[i];
-                        const isDay = hourly.is_day[i];
-                        const iconName = getWeatherInfo(code, isDay).icon;
+                        if (isCurrentHour) maxPeakRain = ensembleProb;
 
-                        if (isCurrentHour) maxEnsembleRain = ensembleProb;
+                        const code = hourly.weather_code && hourly.weather_code[i] !== undefined ? hourly.weather_code[i] : 0;
+                        const isDay = hourly.is_day && hourly.is_day[i] !== undefined ? hourly.is_day[i] : 1;
+                        const iconName = getWeatherInfo(code, isDay).icon;
 
                         const dateLabel = `${thaiDays[itemDate.getDay()]} ${itemDate.getDate()}`;
 
@@ -520,7 +523,7 @@
                         hourlyContainer.appendChild(card);
                     }
 
-                    document.getElementById('rain-chance-val').innerText = `${maxEnsembleRain}%`;
+                    document.getElementById('rain-chance-val').innerText = `${maxPeakRain}%`;
                     lucide.createIcons();
                 })
                 .catch(err => console.error("Error fetching weather:", err));
@@ -562,9 +565,9 @@
         }
 
         function fallbackToDefaultLocation() {
-            document.getElementById('location-text').innerText = 'นนทบุรี (เลือกพื้นที่ด้านบน)';
-            const defaultLat = 13.8584;
-            const defaultLon = 100.4851;
+            document.getElementById('location-text').innerText = 'บางพลัด (เลือกพื้นที่ด้านบน)';
+            const defaultLat = 13.7845;
+            const defaultLon = 100.4907;
             initMap(defaultLat, defaultLon);
             fetchWeatherData(defaultLat, defaultLon);
         }
@@ -572,7 +575,7 @@
         function populateFallbackProvinces() {
             const provSelect = document.getElementById('province-select');
             provSelect.innerHTML = '<option value="">-- เลือกจังหวัด --</option>';
-            const defaultProvinces = ['นนทบุรี', 'กรุงเทพมหานคร', 'ปทุมธานี', 'สมุทรปราการ', 'ชลบุรี', 'เชียงใหม่', 'ขอนแก่น', 'ภูเก็ต', 'พิษณุโลก'];
+            const defaultProvinces = ['กรุงเทพมหานคร', 'นนทบุรี', 'ปทุมธานี', 'สมุทรปราการ', 'ชลบุรี', 'เชียงใหม่', 'ขอนแก่น', 'ภูเก็ต', 'พิษณุโลก'];
             defaultProvinces.forEach(name => {
                 const opt = document.createElement('option');
                 opt.value = name;
