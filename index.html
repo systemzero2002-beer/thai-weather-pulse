@@ -451,8 +451,8 @@
                     const gfsArr = hourly.precipitation_probability_gfs_seamless || defaultProb;
                     const iconArr = hourly.precipitation_probability_icon_seamless || defaultProb;
 
-                    // ดึงอาเรย์อุณหภูมิรายชั่วโมงจริงจาก API
-                    const tempArr = hourly.temperature_2m || [];
+                    // ดึงอาเรย์อุณหภูมิรายชั่วโมงเฉพาะของโมเดล ECMWF หรือค่าหลักที่ถูกต้อง
+                    const tempArr = hourly.temperature_2m_ecmwf_ifs025 || hourly.temperature_2m || [];
 
                     const nowIsoString = new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' });
                     const nowDate = new Date(nowIsoString);
@@ -510,7 +510,7 @@
                         const hourNum = itemDate.getHours();
                         const hourFormatted = String(hourNum).padStart(2, '0') + ':00';
                         
-                        // ดึงอุณหภูมิรายชั่วโมงจริง (ถ้าเป็นช่องแรกใช้ค่าปัจจุบัน ถ้าไม่ใช่ดึงตามอาเรย์ชั่วโมงที่ i)
+                        // ดึงอุณหภูมิรายชั่วโมงจริงแยกตามอาเรย์ชั่วโมงที่ i อย่างแม่นยำ
                         const temp = isCurrentHour ? Math.round(current.temperature_2m) : (tempArr[i] !== undefined ? Math.round(tempArr[i]) : Math.round(current.temperature_2m));
 
                         const pEcmwf = ecmwfArr[i] !== undefined ? ecmwfArr[i] : 0;
@@ -577,7 +577,7 @@
                                 document.getElementById('location-text').innerText = `${sub ? sub + ' ' : ''}${dist ? dist + ' ' : ''}${prov}`;
                             })
                             .catch(() => {
-                                document.getElementById('location-text').innerText = `พิกัด GPS: ${lat.toFixed(2)}, ${lon.toFixed(2)}`;
+                                document.getElementById('location-text'.innerText = `พิกัด GPS: ${lat.toFixed(2)}, ${lon.toFixed(2)}`);
                             });
 
                         initMap(lat, lon);
