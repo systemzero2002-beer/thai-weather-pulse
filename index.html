@@ -116,8 +116,8 @@
                     <h2 id="temp-display" class="text-4xl font-extrabold text-white tracking-tight">--°C</h2>
                     <p id="weather-desc" class="text-xs text-emerald-200/80 mt-1">กำลังโหลดข้อมูลสภาพอากาศ...</p>
                 </div>
-                <div id="weather-main-icon" class="text-emerald-300 p-2 bg-emerald-800/40 rounded-2xl border border-emerald-700/30">
-                    <i data-lucide="cloud-sun" class="w-12 h-12"></i>
+                <div id="weather-main-icon" class="text-amber-400 p-2 bg-emerald-800/40 rounded-2xl border border-emerald-700/30">
+                    <i data-lucide="sun" class="w-12 h-12"></i>
                 </div>
             </div>
 
@@ -407,24 +407,24 @@
 
         function getWeatherInfo(code, isDay = 1) {
             const weatherMap = {
-                0: { desc: 'ท้องฟ้าแจ่มใส', icon: isDay ? 'sun' : 'moon' },
-                1: { desc: 'ปลอดโปร่งเป็นส่วนใหญ่', icon: isDay ? 'cloud-sun' : 'cloud-moon' },
-                2: { desc: 'มีเมฆบางส่วน', icon: isDay ? 'cloud-sun' : 'cloud-moon' },
-                3: { desc: 'มีเมฆมาก', icon: 'cloud' },
-                45: { desc: 'มีหมอก', icon: 'cloud-fog' },
-                48: { desc: 'มีหมอกหนา', icon: 'cloud-fog' },
-                51: { desc: 'ฝนปรอยๆ เล็กน้อย', icon: 'cloud-drizzle' },
-                53: { desc: 'ฝนปรอยๆ ปานกลาง', icon: 'cloud-drizzle' },
-                55: { desc: 'ฝนปรอยๆ หนัก', icon: 'cloud-drizzle' },
-                61: { desc: 'ฝนตกเล็กน้อย', icon: 'cloud-rain' },
-                63: { desc: 'ฝนตกปานกลาง', icon: 'cloud-rain' },
-                65: { desc: 'ฝนตกหนัก', icon: 'cloud-heavy-rain' },
-                80: { desc: 'ฝนซู่เล็กน้อย', icon: 'cloud-rain' },
-                81: { desc: 'ฝนซู่ปานกลาง', icon: 'cloud-rain' },
-                82: { desc: 'ฝนซู่หนักมาก', icon: 'cloud-lighting' },
-                95: { desc: 'พายุฝนฟ้าคะนอง', icon: 'cloud-lightning' }
+                0: { desc: 'ท้องฟ้าแจ่มใส', icon: isDay ? 'sun' : 'moon', color: isDay ? 'text-amber-400' : 'text-blue-300' },
+                1: { desc: 'ปลอดโปร่งเป็นส่วนใหญ่', icon: isDay ? 'cloud-sun' : 'cloud-moon', color: 'text-amber-300' },
+                2: { desc: 'มีเมฆบางส่วน', icon: isDay ? 'cloud-sun' : 'cloud-moon', color: 'text-sky-300' },
+                3: { desc: 'มีเมฆมาก', icon: 'cloud', color: 'text-slate-300' },
+                45: { desc: 'มีหมอก', icon: 'cloud-fog', color: 'text-slate-300' },
+                48: { desc: 'มีหมอกหนา', icon: 'cloud-fog', color: 'text-slate-300' },
+                51: { desc: 'ฝนปรอยๆ เล็กน้อย', icon: 'cloud-drizzle', color: 'text-sky-400' },
+                53: { desc: 'ฝนปรอยๆ ปานกลาง', icon: 'cloud-drizzle', color: 'text-sky-400' },
+                55: { desc: 'ฝนปรอยๆ หนัก', icon: 'cloud-drizzle', color: 'text-sky-400' },
+                61: { desc: 'ฝนตกเล็กน้อย', icon: 'cloud-rain', color: 'text-sky-400' },
+                63: { desc: 'ฝนตกปานกลาง', icon: 'cloud-rain', color: 'text-sky-400' },
+                65: { desc: 'ฝนตกหนัก', icon: 'cloud-heavy-rain', color: 'text-blue-500' },
+                80: { desc: 'ฝนซู่เล็กน้อย', icon: 'cloud-rain', color: 'text-sky-400' },
+                81: { desc: 'ฝนซู่ปานกลาง', icon: 'cloud-rain', color: 'text-sky-400' },
+                82: { desc: 'ฝนซู่หนักมาก', icon: 'cloud-lightning', color: 'text-amber-400' },
+                95: { desc: 'พายุฝนฟ้าคะนอง', icon: 'cloud-lightning', color: 'text-amber-400' }
             };
-            return weatherMap[code] || { desc: 'สภาพอากาศทั่วไป', icon: 'cloud' };
+            return weatherMap[code] || { desc: 'สภาพอากาศทั่วไป', icon: 'cloud', color: 'text-emerald-300' };
         }
 
         function fetchWeatherData(lat, lon) {
@@ -440,7 +440,8 @@
                     
                     const weatherMeta = getWeatherInfo(current.weather_code, current.is_day);
                     document.getElementById('weather-desc').innerText = weatherMeta.desc;
-                    document.getElementById('weather-main-icon').innerHTML = `<i data-lucide="${weatherMeta.icon}" class="w-10 h-10"></i>`;
+                    document.getElementById('weather-main-icon').className = `${weatherMeta.color} p-2 bg-emerald-800/40 rounded-2xl border border-emerald-700/30`;
+                    document.getElementById('weather-main-icon').innerHTML = `<i data-lucide="${weatherMeta.icon}" class="w-12 h-12"></i>`;
 
                     const hourly = data.hourly || {};
                     const timeArr = hourly.time || [];
@@ -450,8 +451,8 @@
                     const gfsArr = hourly.precipitation_probability_gfs_seamless || defaultProb;
                     const iconArr = hourly.precipitation_probability_icon_seamless || defaultProb;
 
-                    // ดึงค่าอุณหภูมิรายชั่วโมงรองรับ Multi-Model (ใช้ temperature_2m ของ ECMWF หรือค่าหลัก)
-                    const tempArr = hourly.temperature_2m_ecmwf_ifs025 || hourly.temperature_2m || [];
+                    // ใช้ temperature_2m หลักเพื่อแก้ปัญหา 0 องศา
+                    const tempArr = hourly.temperature_2m || [];
 
                     const now = new Date();
                     const currentLocalHour = now.getHours();
@@ -509,7 +510,6 @@
                         const hourNum = itemDate.getHours();
                         const hourFormatted = hourNum.toString().padStart(2, '0') + ':00';
                         
-                        // ดึงอุณหภูมิแต่ละชั่วโมงให้ถูกต้อง
                         const temp = tempArr[i] !== undefined ? Math.round(tempArr[i]) : Math.round(current.temperature_2m);
 
                         const pEcmwf = ecmwfArr[i] !== undefined ? ecmwfArr[i] : 0;
@@ -519,7 +519,9 @@
 
                         const code = hourly.weather_code && hourly.weather_code[i] !== undefined ? hourly.weather_code[i] : 0;
                         const isDay = hourly.is_day && hourly.is_day[i] !== undefined ? hourly.is_day[i] : 1;
-                        const iconName = getWeatherInfo(code, isDay).icon;
+                        const wInfo = getWeatherInfo(code, isDay);
+                        const iconName = wInfo.icon;
+                        const iconColor = wInfo.color;
 
                         const dateLabel = `${thaiDays[itemDate.getDay()]} ${itemDate.getDate()}`;
 
@@ -533,12 +535,12 @@
                         card.innerHTML = `
                             <div class="text-[10px] ${isCurrentHour ? 'text-emerald-100' : 'text-emerald-300/80'} mb-0.5">${dateLabel}</div>
                             <div class="text-xs font-semibold ${isCurrentHour ? 'text-white font-extrabold' : 'text-emerald-200'}">${isCurrentHour ? 'ตอนนี้' : hourFormatted}</div>
-                            <div class="my-2 flex justify-center ${isCurrentHour ? 'text-white' : 'text-emerald-300'}">
+                            <div class="my-2 flex justify-center ${isCurrentHour ? 'text-white' : iconColor}">
                                 <i data-lucide="${iconName}" class="w-7 h-7"></i>
                             </div>
                             <div class="text-sm font-extrabold">${temp}°</div>
                             <div class="text-[10px] ${isCurrentHour ? 'text-emerald-100' : 'text-emerald-300/90'} font-medium mt-1 flex items-center justify-center gap-0.5">
-                                <i data-lucide="droplet" class="w-3 h-3"></i>${ensembleProb}%
+                                <i data-lucide="droplet" class="w-3 h-3 text-sky-400"></i>${ensembleProb}%
                             </div>
                         `;
 
@@ -586,9 +588,9 @@
         }
 
         function fallbackToDefaultLocation() {
-            document.getElementById('location-text').innerText = 'บางพลัด (เลือกพื้นที่ด้านบน)';
-            const defaultLat = 13.7845;
-            const defaultLon = 100.4907;
+            document.getElementById('location-text').innerText = 'คลองข่อย นนทบุรี (เลือกพื้นที่ด้านบน)';
+            const defaultLat = 13.9315;
+            const defaultLon = 100.4735;
             initMap(defaultLat, defaultLon);
             fetchWeatherData(defaultLat, defaultLon);
         }
@@ -596,7 +598,7 @@
         function populateFallbackProvinces() {
             const provSelect = document.getElementById('province-select');
             provSelect.innerHTML = '<option value="">-- เลือกจังหวัด --</option>';
-            const defaultProvinces = ['กรุงเทพมหานคร', 'นนทบุรี', 'ปทุมธานี', 'สมุทรปราการ', 'ชลบุรี', 'เชียงใหม่', 'ขอนแก่น', 'ภูเก็ต', 'พิษณุโลก'];
+            const defaultProvinces = ['นนทบุรี', 'กรุงเทพมหานคร', 'ปทุมธานี', 'สมุทรปราการ', 'ชลบุรี', 'เชียงใหม่', 'ขอนแก่น', 'ภูเก็ต', 'พิษณุโลก'];
             defaultProvinces.forEach(name => {
                 const opt = document.createElement('option');
                 opt.value = name;
