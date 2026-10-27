@@ -424,7 +424,7 @@
                 82: { desc: 'ฝนซู่หนักมาก', icon: 'cloud-lightning', color: 'text-amber-400' },
                 95: { desc: 'พายุฝนฟ้าคะนอง', icon: 'cloud-lightning', color: 'text-amber-400' }
             };
-            return weatherMap[code] || { desc: 'สภาพอากาศทั่วไป', icon: 'cloud', color: 'text-emerald-300' };
+            return weatherMap[code] || { desc: 'สภาพอากาศทั่วไป', icon: isDay ? 'cloud' : 'cloud-moon', color: isDay ? 'text-emerald-300' : 'text-blue-300' };
         }
 
         function fetchWeatherData(lat, lon) {
@@ -453,14 +453,15 @@
 
                     const tempArr = hourly.temperature_2m || [];
 
-                    const now = new Date();
-                    const currentLocalHour = now.getHours();
-                    
-                    let startIndex = timeArr.findIndex(timeStr => {
-                        const itemDate = new Date(timeStr.replace('T', ' '));
-                        return itemDate.getDate() === now.getDate() && itemDate.getHours() === currentLocalHour;
-                    });
+                    // ค้นหาตำแหน่ง Index ของชั่วโมงปัจจุบันตามเวลาจริงของ API (Timezone Asia/Bangkok)
+                    const nowIsoString = new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' });
+                    const nowDate = new Date(nowIsoString);
+                    const currentHourStr = nowDate.getFullYear() + '-' + 
+                        String(nowDate.getMonth() + 1).padStart(2, '0') + '-' + 
+                        String(nowDate.getDate()).padStart(2, '0') + 'T' + 
+                        String(nowDate.getHours()).padStart(2, '0') + ':00';
 
+                    let startIndex = timeArr.findIndex(timeStr => timeStr.startsWith(currentHourStr.slice(0, 13)));
                     if (startIndex === -1) startIndex = 0;
 
                     const curEcmwf = ecmwfArr[startIndex] !== undefined ? ecmwfArr[startIndex] : 0;
@@ -506,10 +507,8 @@
                         const itemDate = new Date(rawTime.replace('T', ' '));
                         const isCurrentHour = (i === startIndex);
 
-                        const hourNum = itemDate.getHours();
-                        const hourFormatted = hourNum.toString().padStart(2, '0') + ':00';
+                        const hourFormatted = String(itemDate.getHours()).padStart(2, '0') + ':00';
                         
-                        // ช่องแรก "ตอนนี้" ใช้ค่าอุณหภูมิ, โค้ดสภาพอากาศ และสถานะกลางวันเดียวกับการ์ดด้านบนเป๊ะๆ
                         const temp = isCurrentHour ? Math.round(current.temperature_2m) : (tempArr[i] !== undefined ? Math.round(tempArr[i]) : Math.round(current.temperature_2m));
 
                         const pEcmwf = ecmwfArr[i] !== undefined ? ecmwfArr[i] : 0;
