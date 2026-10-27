@@ -451,7 +451,6 @@
                     const gfsArr = hourly.precipitation_probability_gfs_seamless || defaultProb;
                     const iconArr = hourly.precipitation_probability_icon_seamless || defaultProb;
 
-                    // ใช้ temperature_2m หลักเพื่อแก้ปัญหา 0 องศา
                     const tempArr = hourly.temperature_2m || [];
 
                     const now = new Date();
@@ -510,15 +509,17 @@
                         const hourNum = itemDate.getHours();
                         const hourFormatted = hourNum.toString().padStart(2, '0') + ':00';
                         
-                        const temp = tempArr[i] !== undefined ? Math.round(tempArr[i]) : Math.round(current.temperature_2m);
+                        // ช่องแรก "ตอนนี้" ใช้ค่าอุณหภูมิ, โค้ดสภาพอากาศ และสถานะกลางวันเดียวกับการ์ดด้านบนเป๊ะๆ
+                        const temp = isCurrentHour ? Math.round(current.temperature_2m) : (tempArr[i] !== undefined ? Math.round(tempArr[i]) : Math.round(current.temperature_2m));
 
                         const pEcmwf = ecmwfArr[i] !== undefined ? ecmwfArr[i] : 0;
                         const pGfs = gfsArr[i] !== undefined ? gfsArr[i] : 0;
                         const pIcon = iconArr[i] !== undefined ? iconArr[i] : 0;
                         const ensembleProb = Math.round((pEcmwf * 0.5) + (pGfs * 0.25) + (pIcon * 0.25));
 
-                        const code = hourly.weather_code && hourly.weather_code[i] !== undefined ? hourly.weather_code[i] : 0;
-                        const isDay = hourly.is_day && hourly.is_day[i] !== undefined ? hourly.is_day[i] : 1;
+                        const code = isCurrentHour ? current.weather_code : (hourly.weather_code && hourly.weather_code[i] !== undefined ? hourly.weather_code[i] : 0);
+                        const isDay = isCurrentHour ? current.is_day : (hourly.is_day && hourly.is_day[i] !== undefined ? hourly.is_day[i] : 1);
+                        
                         const wInfo = getWeatherInfo(code, isDay);
                         const iconName = wInfo.icon;
                         const iconColor = wInfo.color;
