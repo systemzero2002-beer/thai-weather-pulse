@@ -50,7 +50,7 @@
                     </div>
                     <div>
                         <h1 class="text-lg font-bold leading-none text-emerald-400">ThaiWeatherPulse</h1>
-                        <p class="text-[10px] text-emerald-200/70">สภาพอากาศ • ฝุ่น PM2.5 • น้ำท่วม & ระดับเขื่อน</p>
+                        <p class="text-[10px] text-emerald-200/70">สภาพอากาศ • ฝุ่น PM2.5 • น้ำท่วม & เบอร์ฉุกเฉิน</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-1.5">
@@ -66,19 +66,23 @@
                 </div>
             </div>
 
-            <!-- แถบเมนูสลับหน้า 3 เมนูหลัก -->
-            <nav id="nav-container" class="grid grid-cols-3 gap-1.5 bg-emerald-950/80 p-1 rounded-xl border border-emerald-800/60 text-xs font-semibold text-center transition-colors duration-300">
-                <button id="nav-home" onclick="switchTab('home')" class="py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 bg-emerald-600 text-white shadow-md">
+            <!-- แถบเมนูสลับหน้า 4 เมนูหลัก -->
+            <nav id="nav-container" class="grid grid-cols-4 gap-1 bg-emerald-950/80 p-1 rounded-xl border border-emerald-800/60 text-[11px] font-semibold text-center transition-colors duration-300">
+                <button id="nav-home" onclick="switchTab('home')" class="py-1.5 px-1 rounded-lg transition-all flex items-center justify-center gap-1 bg-emerald-600 text-white shadow-md">
                     <i data-lucide="home" class="w-3.5 h-3.5"></i>
                     <span>หน้าหลัก</span>
                 </button>
-                <button id="nav-pm25" onclick="switchTab('pm25')" class="py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 text-emerald-300 hover:bg-emerald-900/60">
+                <button id="nav-pm25" onclick="switchTab('pm25')" class="py-1.5 px-1 rounded-lg transition-all flex items-center justify-center gap-1 text-emerald-300 hover:bg-emerald-900/60">
                     <i data-lucide="wind" class="w-3.5 h-3.5"></i>
-                    <span>ค่าฝุ่น PM2.5</span>
+                    <span>ค่าฝุ่น</span>
                 </button>
-                <button id="nav-flood" onclick="switchTab('flood')" class="py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 text-emerald-300 hover:bg-emerald-900/60">
+                <button id="nav-flood" onclick="switchTab('flood')" class="py-1.5 px-1 rounded-lg transition-all flex items-center justify-center gap-1 text-emerald-300 hover:bg-emerald-900/60">
                     <i data-lucide="waves" class="w-3.5 h-3.5"></i>
                     <span>สถานการณ์น้ำ</span>
+                </button>
+                <button id="nav-emergency" onclick="switchTab('emergency')" class="py-1.5 px-1 rounded-lg transition-all flex items-center justify-center gap-1 text-emerald-300 hover:bg-emerald-900/60">
+                    <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
+                    <span>เบอร์ฉุกเฉิน</span>
                 </button>
             </nav>
         </div>
@@ -140,7 +144,7 @@
                 </div>
             </div>
 
-            <!-- Weather Display Card (เพิ่มดัชนี UV และ Feels Like) -->
+            <!-- Weather Display Card -->
             <div id="weather-card-bg" class="rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-white/10 bg-gradient-to-br from-emerald-800 to-teal-950 relative overflow-hidden">
                 <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
                 
@@ -165,7 +169,6 @@
                         <div id="weather-main-icon" class="text-white p-2.5 bg-white/20 rounded-2xl border border-white/30 shadow-lg backdrop-blur-md">
                             <i data-lucide="sun" class="w-10 h-10"></i>
                         </div>
-                        <!-- ค่าดัชนี UV -->
                         <div class="bg-black/30 backdrop-blur-sm px-2.5 py-1 rounded-xl border border-white/20 text-center">
                             <p class="text-[9px] text-white/70">ดัชนี UV</p>
                             <p id="uv-index-val" class="text-xs font-bold text-amber-300">--</p>
@@ -239,9 +242,8 @@
 
         </div>
 
-        <!-- ================= PAGE 2: หน้าแสดงค่าฝุ่น PM2.5 (เพิ่มคำแนะนำสุขภาพ) ================= -->
+        <!-- ================= PAGE 2: หน้าแสดงค่าฝุ่น PM2.5 ================= -->
         <div id="page-pm25" class="hidden space-y-4">
-            <!-- กล่องคำแนะนำสุขภาพตามค่า PM2.5 -->
             <div class="bg-emerald-900/80 border border-emerald-800/80 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-2">
                 <h3 class="text-xs font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5">
                     <i data-lucide="heart-pulse" class="w-4 h-4 text-emerald-400"></i> คำแนะนำสุขภาพตามระดับ PM2.5
@@ -290,45 +292,8 @@
             </div>
         </div>
 
-        <!-- ================= PAGE 3: หน้าแสดงสถานการณ์น้ำ เขื่อน และเบอร์สายด่วน ================= -->
+        <!-- ================= PAGE 3: หน้าแสดงสถานการณ์น้ำ & เขื่อน ================= -->
         <div id="page-flood" class="hidden space-y-4">
-            <!-- 📞 สายด่วนแจ้งเหตุภัยพิบัติ -->
-            <div class="bg-emerald-900/80 border border-emerald-800/80 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-2.5">
-                <h3 class="text-xs font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5">
-                    <i data-lucide="phone-call" class="w-4 h-4 text-emerald-400"></i> สายด่วนแจ้งเหตุภัยพิบัติ & ฉุกเฉิน
-                </h3>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <a href="tel:1784" class="bg-emerald-950/70 p-2.5 rounded-xl border border-emerald-800/60 flex items-center justify-between hover:bg-emerald-800/50 transition-colors">
-                        <div>
-                            <span class="font-bold text-white block">ปภ. (1784)</span>
-                            <span class="text-[10px] text-emerald-300/70">แจ้งภัยพิบัติ/น้ำท่วม</span>
-                        </div>
-                        <i data-lucide="phone" class="w-4 h-4 text-emerald-400"></i>
-                    </a>
-                    <a href="tel:1669" class="bg-emerald-950/70 p-2.5 rounded-xl border border-emerald-800/60 flex items-center justify-between hover:bg-emerald-800/50 transition-colors">
-                        <div>
-                            <span class="font-bold text-white block">เจ็บป่วยฉุกเฉิน (1669)</span>
-                            <span class="text-[10px] text-emerald-300/70">หน่วยแพทย์กู้ชีพ</span>
-                        </div>
-                        <i data-lucide="phone" class="w-4 h-4 text-emerald-400"></i>
-                    </a>
-                    <a href="tel:1146" class="bg-emerald-950/70 p-2.5 rounded-xl border border-emerald-800/60 flex items-center justify-between hover:bg-emerald-800/50 transition-colors">
-                        <div>
-                            <span class="font-bold text-white block">ทางหลวงชนบท (1146)</span>
-                            <span class="text-[10px] text-emerald-300/70">สอบถามเส้นทางน้ำท่วม</span>
-                        </div>
-                        <i data-lucide="phone" class="w-4 h-4 text-emerald-400"></i>
-                    </a>
-                    <a href="tel:1193" class="bg-emerald-950/70 p-2.5 rounded-xl border border-emerald-800/60 flex items-center justify-between hover:bg-emerald-800/50 transition-colors">
-                        <div>
-                            <span class="font-bold text-white block">ตำรวจทางหลวง (1193)</span>
-                            <span class="text-[10px] text-emerald-300/70">ช่วยเหลือการเดินทาง</span>
-                        </div>
-                        <i data-lucide="phone" class="w-4 h-4 text-emerald-400"></i>
-                    </a>
-                </div>
-            </div>
-
             <div class="bg-emerald-900/80 border border-emerald-800/80 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-3">
                 <div class="flex items-center justify-between border-b border-emerald-800/60 pb-2.5">
                     <div class="flex items-center gap-2">
@@ -463,6 +428,85 @@
             </div>
         </div>
 
+        <!-- ================= PAGE 4: หน้าเบอร์สายด่วนฉุกเฉิน (ย้ายมาเปิดเป็นหน้าใหม่) ================= -->
+        <div id="page-emergency" class="hidden space-y-4">
+            <div class="bg-emerald-900/80 border border-emerald-800/80 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-3">
+                <div class="flex items-center justify-between border-b border-emerald-800/60 pb-2.5">
+                    <div class="flex items-center gap-2">
+                        <div class="bg-emerald-500/20 text-emerald-400 p-2 rounded-xl border border-emerald-500/30">
+                            <i data-lucide="phone-call" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-sm font-bold text-white">สายด่วนแจ้งเหตุภัยพิบัติ & ฉุกเฉิน</h2>
+                            <p class="text-[10px] text-emerald-300/70">กดโทรออกได้ทันที 24 ชั่วโมง</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-2.5 text-xs">
+                    <a href="tel:1784" class="bg-emerald-950/70 p-3 rounded-xl border border-emerald-800/60 flex items-center justify-between hover:bg-emerald-800/50 transition-colors shadow-md">
+                        <div>
+                            <span class="font-bold text-emerald-300 text-sm block">ปภ. กรมป้องกันและบรรเทาสาธารณภัย (1784)</span>
+                            <span class="text-[11px] text-emerald-200/80">แจ้งเหตุภัยพิบัติ น้ำท่วม อุทกภัย วาตภัย</span>
+                        </div>
+                        <div class="bg-emerald-600 text-white p-2 rounded-xl">
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                        </div>
+                    </a>
+
+                    <a href="tel:1669" class="bg-emerald-950/70 p-3 rounded-xl border border-emerald-800/60 flex items-center justify-between hover:bg-emerald-800/50 transition-colors shadow-md">
+                        <div>
+                            <span class="font-bold text-emerald-300 text-sm block">เจ็บป่วยฉุกเฉิน / สถาบันการแพทย์ฉุกเฉิน (1669)</span>
+                            <span class="text-[11px] text-emerald-200/80">หน่วยแพทย์กู้ชีพและรถพยาบาลฉุกเฉิน</span>
+                        </div>
+                        <div class="bg-emerald-600 text-white p-2 rounded-xl">
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                        </div>
+                    </a>
+
+                    <a href="tel:1146" class="bg-emerald-950/70 p-3 rounded-xl border border-emerald-800/60 flex items-center justify-between hover:bg-emerald-800/50 transition-colors shadow-md">
+                        <div>
+                            <span class="font-bold text-emerald-300 text-sm block">กรมทางหลวงชนบท (1146)</span>
+                            <span class="text-[11px] text-emerald-200/80">สอบถามเส้นทางน้ำท่วมและแจ้งถนนชำรุด</span>
+                        </div>
+                        <div class="bg-emerald-600 text-white p-2 rounded-xl">
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                        </div>
+                    </a>
+
+                    <a href="tel:1193" class="bg-emerald-950/70 p-3 rounded-xl border border-emerald-800/60 flex items-center justify-between hover:bg-emerald-800/50 transition-colors shadow-md">
+                        <div>
+                            <span class="font-bold text-emerald-300 text-sm block">ตำรวจทางหลวง (1193)</span>
+                            <span class="text-[11px] text-emerald-200/80">สอบถามสภาพการจราจรและความช่วยเหลือบนทางหลวง</span>
+                        </div>
+                        <div class="bg-emerald-600 text-white p-2 rounded-xl">
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                        </div>
+                    </a>
+
+                    <a href="tel:191" class="bg-emerald-950/70 p-3 rounded-xl border border-emerald-800/60 flex items-center justify-between hover:bg-emerald-800/50 transition-colors shadow-md">
+                        <div>
+                            <span class="font-bold text-emerald-300 text-sm block">เหตุด่วนเหตุร้าย (191)</span>
+                            <span class="text-[11px] text-emerald-200/80">แจ้งเหตุด่วนเหตุร้ายและขอความช่วยเหลือทั่วไป</span>
+                        </div>
+                        <div class="bg-emerald-600 text-white p-2 rounded-xl">
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                        </div>
+                    </a>
+
+                    <a href="tel:199" class="bg-emerald-950/70 p-3 rounded-xl border border-emerald-800/60 flex items-center justify-between hover:bg-emerald-800/50 transition-colors shadow-md">
+                        <div>
+                            <span class="font-bold text-emerald-300 text-sm block">ดับเพลิงและกู้ภัย (199)</span>
+                            <span class="text-[11px] text-emerald-200/80">แจ้งเหตุอัคคีภัย สัตว์พิษเข้าบ้าน และกู้ภัย</span>
+                        </div>
+                        <div class="bg-emerald-600 text-white p-2 rounded-xl">
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <!-- Footer เครดิตแหล่งข้อมูล -->
         <footer class="mt-6 pt-4 border-t border-emerald-800/50 text-center text-[10px] text-emerald-300/60 space-y-1">
             <p>ข้อมูลสภาพอากาศ & PM2.5 โดย <a href="https://open-meteo.com/" target="_blank" class="underline hover:text-emerald-300">Open-Meteo</a>[cite: 1]</p>
@@ -481,7 +525,6 @@
 
         lucide.createIcons();
 
-        // ฟังก์ชันสลับ Theme มืด / สว่าง
         function toggleTheme() {
             isDarkMode = !isDarkMode;
             const body = document.getElementById('body-theme');
@@ -496,7 +539,7 @@
             if (isDarkMode) {
                 body.className = "bg-emerald-950 text-slate-100 font-sans min-h-screen pb-8 selection:bg-emerald-500 selection:text-white transition-colors duration-300";
                 header.className = "sticky top-0 z-50 bg-emerald-900/95 backdrop-blur-md border-b border-emerald-800/50 px-4 py-3 shadow-lg transition-colors duration-300";
-                nav.className = "grid grid-cols-3 gap-1.5 bg-emerald-950/80 p-1 rounded-xl border border-emerald-800/60 text-xs font-semibold text-center transition-colors duration-300";
+                nav.className = "grid grid-cols-4 gap-1 bg-emerald-950/80 p-1 rounded-xl border border-emerald-800/60 text-[11px] font-semibold text-center transition-colors duration-300";
                 themeIcon.setAttribute('data-lucide', 'moon');
                 if(searchCard) searchCard.className = "card-box bg-emerald-900/80 border border-emerald-800/80 rounded-2xl p-3.5 shadow-xl backdrop-blur-sm space-y-2.5 transition-colors duration-300";
                 if(hourlyCard) hourlyCard.className = "card-box bg-emerald-900/60 border border-emerald-800/60 rounded-2xl p-4 shadow-xl backdrop-blur-sm transition-colors duration-300";
@@ -505,7 +548,7 @@
             } else {
                 body.className = "bg-slate-100 text-slate-800 font-sans min-h-screen pb-8 selection:bg-emerald-500 selection:text-white transition-colors duration-300";
                 header.className = "sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 py-3 shadow-lg transition-colors duration-300";
-                nav.className = "grid grid-cols-3 gap-1.5 bg-slate-200 p-1 rounded-xl border border-slate-300 text-xs font-semibold text-center transition-colors duration-300";
+                nav.className = "grid grid-cols-4 gap-1 bg-slate-200 p-1 rounded-xl border border-slate-300 text-[11px] font-semibold text-center transition-colors duration-300";
                 themeIcon.setAttribute('data-lucide', 'sun');
                 if(searchCard) searchCard.className = "card-box bg-white border border-slate-200 rounded-2xl p-3.5 shadow-xl backdrop-blur-sm space-y-2.5 transition-colors duration-300";
                 if(hourlyCard) hourlyCard.className = "card-box bg-white border border-slate-200 rounded-2xl p-4 shadow-xl backdrop-blur-sm transition-colors duration-300";
@@ -515,17 +558,18 @@
             lucide.createIcons();
         }
 
+        // สลับหน้าเมนู 4 หน้าหลัก
         function switchTab(tabName) {
-            const pages = ['home', 'pm25', 'flood'];
+            const pages = ['home', 'pm25', 'flood', 'emergency'];
             pages.forEach(p => {
                 document.getElementById(`page-${p}`).classList.add('hidden');
                 const btn = document.getElementById(`nav-${p}`);
-                btn.className = 'py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 text-emerald-300 hover:bg-emerald-900/60';
+                btn.className = 'py-1.5 px-1 rounded-lg transition-all flex items-center justify-center gap-1 text-emerald-300 hover:bg-emerald-900/60';
             });
 
             document.getElementById(`page-${tabName}`).classList.remove('hidden');
             const activeBtn = document.getElementById(`nav-${tabName}`);
-            activeBtn.className = 'py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 bg-emerald-600 text-white shadow-md';
+            activeBtn.className = 'py-1.5 px-1 rounded-lg transition-all flex items-center justify-center gap-1 bg-emerald-600 text-white shadow-md';
 
             if (tabName === 'pm25') {
                 loadTopPM25Data();
@@ -813,7 +857,6 @@
                         
                         pmEl.innerText = pm25Val;
 
-                        // ตรวจสอบเงื่อนไขแจ้งเตือนภัยด่วน (Emergency Alert)
                         if (pm25Val > 37.5) {
                             alertBanner.classList.remove('hidden');
                             alertText.innerText = `แจ้งเตือนค่าฝุ่น PM2.5 สูงวิกฤต (${pm25Val} µg/m³) ควรงดกิจกรรมกลางแจ้ง!`;
@@ -843,7 +886,6 @@
                     document.getElementById('humidity-val').innerText = `${current.relative_humidity_2m}%`;
                     document.getElementById('wind-val').innerText = `${Math.round(current.wind_speed_10m)} กม./ชม.`;
                     
-                    // ดึงค่า UV Index ปัจจุบัน (จากรายชั่วโมงตัวแรก)
                     const currentUv = data.hourly && data.hourly.uv_index ? data.hourly.uv_index[0] : 5;
                     document.getElementById('uv-index-val').innerText = currentUv.toFixed(1);
 
