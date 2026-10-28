@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -38,10 +38,10 @@
         }
     </style>
 </head>
-<body class="bg-emerald-950 text-slate-100 font-sans min-h-screen pb-8 selection:bg-emerald-500 selection:text-white">
+<body id="body-theme" class="bg-emerald-950 text-slate-100 font-sans min-h-screen pb-8 selection:bg-emerald-500 selection:text-white transition-colors duration-300">
 
     <!-- Header -->
-    <header class="sticky top-0 z-50 bg-emerald-900/95 backdrop-blur-md border-b border-emerald-800/50 px-4 py-3 shadow-lg">
+    <header id="header-theme" class="sticky top-0 z-50 bg-emerald-900/95 backdrop-blur-md border-b border-emerald-800/50 px-4 py-3 shadow-lg transition-colors duration-300">
         <div class="max-w-md mx-auto space-y-2.5">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -53,14 +53,21 @@
                         <p class="text-[10px] text-emerald-200/70">สภาพอากาศ • ฝุ่น PM2.5 • น้ำท่วม & ระดับเขื่อน</p>
                     </div>
                 </div>
-                <button onclick="useCurrentGPS()" class="bg-emerald-800/80 hover:bg-emerald-700 px-3 py-1.5 rounded-xl text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition-all border border-emerald-700/50 active:scale-95" title="ใช้พิกัด GPS ปัจจุบัน">
-                    <i data-lucide="locate-fixed" class="w-4 h-4"></i>
-                    <span>GPS จริง</span>
-                </button>
+                <div class="flex items-center gap-1.5">
+                    <!-- ปุ่มสลับ Theme Dark/Light -->
+                    <button onclick="toggleTheme()" class="bg-emerald-800/80 hover:bg-emerald-700 p-2 rounded-xl text-emerald-300 text-xs transition-all border border-emerald-700/50" title="สลับโหมดมืด/สว่าง">
+                        <i id="theme-icon" data-lucide="moon" class="w-4 h-4"></i>
+                    </button>
+                    <!-- ปุ่ม GPS -->
+                    <button onclick="useCurrentGPS()" class="bg-emerald-800/80 hover:bg-emerald-700 px-3 py-1.5 rounded-xl text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition-all border border-emerald-700/50 active:scale-95" title="ใช้พิกัด GPS ปัจจุบัน">
+                        <i data-lucide="locate-fixed" class="w-4 h-4"></i>
+                        <span>GPS จริง</span>
+                    </button>
+                </div>
             </div>
 
             <!-- แถบเมนูสลับหน้า 3 เมนูหลัก -->
-            <nav class="grid grid-cols-3 gap-1.5 bg-emerald-950/80 p-1 rounded-xl border border-emerald-800/60 text-xs font-semibold text-center">
+            <nav id="nav-container" class="grid grid-cols-3 gap-1.5 bg-emerald-950/80 p-1 rounded-xl border border-emerald-800/60 text-xs font-semibold text-center transition-colors duration-300">
                 <button id="nav-home" onclick="switchTab('home')" class="py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 bg-emerald-600 text-white shadow-md">
                     <i data-lucide="home" class="w-3.5 h-3.5"></i>
                     <span>หน้าหลัก</span>
@@ -78,13 +85,24 @@
     </header>
 
     <!-- Main Container -->
-    <main class="max-w-md mx-auto px-4 pt-4">
+    <main class="max-w-md mx-auto px-4 pt-4 space-y-4">
+
+        <!-- 🚨 ระบบแจ้งเตือนภัยด่วน (Emergency Alert Banner) -->
+        <div id="alert-banner" class="hidden bg-red-950/90 border border-red-500/60 rounded-2xl p-3 shadow-xl backdrop-blur-sm flex items-center gap-3 text-xs text-red-200 animate-pulse">
+            <div class="bg-red-500 text-white p-2 rounded-xl flex-shrink-0">
+                <i data-lucide="alert-octagon" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h4 class="font-bold text-white text-sm">ประกาศแจ้งเตือนภัยสภาพอากาศ</h4>
+                <p id="alert-text" class="text-[11px] text-red-200/90">พบกลุ่มฝนฟ้าคะนองหรือความรุนแรงในพื้นที่ โปรดระมัดระวังการเดินทาง</p>
+            </div>
+        </div>
 
         <!-- ================= PAGE 1: หน้าหลัก ================= -->
         <div id="page-home" class="space-y-4">
 
             <!-- Selector Card -->
-            <div class="bg-emerald-900/80 border border-emerald-800/80 rounded-2xl p-3.5 shadow-xl backdrop-blur-sm space-y-2.5">
+            <div id="card-search" class="card-box bg-emerald-900/80 border border-emerald-800/80 rounded-2xl p-3.5 shadow-xl backdrop-blur-sm space-y-2.5 transition-colors duration-300">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5">
                         <i data-lucide="map-pin" class="w-4 h-4"></i> เลือกพื้นที่ / ค้นหาเมือง
@@ -122,7 +140,7 @@
                 </div>
             </div>
 
-            <!-- Weather Display Card -->
+            <!-- Weather Display Card (เพิ่มดัชนี UV และ Feels Like) -->
             <div id="weather-card-bg" class="rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-white/10 bg-gradient-to-br from-emerald-800 to-teal-950 relative overflow-hidden">
                 <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
                 
@@ -133,8 +151,9 @@
                             <span id="location-text" class="text-sm tracking-wide">กำลังระบุพื้นที่...</span>
                         </div>
                         <h2 id="temp-display" class="text-4xl font-extrabold text-white tracking-tight">--°C</h2>
+                        <p id="feels-like" class="text-[11px] text-white/80 mt-0.5">รู้สึกเหมือน: --°C</p>
                         
-                        <div class="flex items-center gap-2 mt-1">
+                        <div class="flex items-center gap-2 mt-1.5">
                             <p id="weather-desc" class="text-xs text-white/90 font-medium">กำลังโหลด...</p>
                             <span class="text-white/60">•</span>
                             <div id="pm25-badge" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-black/30 border border-white/20 text-white">
@@ -142,8 +161,15 @@
                             </div>
                         </div>
                     </div>
-                    <div id="weather-main-icon" class="text-white p-2.5 bg-white/20 rounded-2xl border border-white/30 shadow-lg backdrop-blur-md">
-                        <i data-lucide="sun" class="w-10 h-10"></i>
+                    <div class="flex flex-col items-end gap-2">
+                        <div id="weather-main-icon" class="text-white p-2.5 bg-white/20 rounded-2xl border border-white/30 shadow-lg backdrop-blur-md">
+                            <i data-lucide="sun" class="w-10 h-10"></i>
+                        </div>
+                        <!-- ค่าดัชนี UV -->
+                        <div class="bg-black/30 backdrop-blur-sm px-2.5 py-1 rounded-xl border border-white/20 text-center">
+                            <p class="text-[9px] text-white/70">ดัชนี UV</p>
+                            <p id="uv-index-val" class="text-xs font-bold text-amber-300">--</p>
+                        </div>
                     </div>
                 </div>
 
@@ -164,7 +190,7 @@
             </div>
 
             <!-- Hourly Forecast -->
-            <div class="bg-emerald-900/60 border border-emerald-800/60 rounded-2xl p-4 shadow-xl backdrop-blur-sm">
+            <div id="card-hourly" class="card-box bg-emerald-900/60 border border-emerald-800/60 rounded-2xl p-4 shadow-xl backdrop-blur-sm transition-colors duration-300">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-xs font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5">
                         <i data-lucide="clock" class="w-4 h-4"></i> พยากรณ์รายชั่วโมง (20 ชม. ล่วงหน้า)
@@ -182,7 +208,7 @@
             </div>
 
             <!-- 5-Day Weather Forecast -->
-            <div class="bg-emerald-900/70 border border-emerald-800/70 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-3">
+            <div id="card-daily" class="card-box bg-emerald-900/70 border border-emerald-800/70 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-3 transition-colors duration-300">
                 <div class="flex items-center justify-between border-b border-emerald-800/60 pb-2">
                     <span class="text-xs font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5">
                         <i data-lucide="calendar-days" class="w-4 h-4 text-emerald-400"></i> พยากรณ์อากาศ 5 วันล่วงหน้า
@@ -198,7 +224,7 @@
             </div>
 
             <!-- Rain Radar Map -->
-            <div class="bg-emerald-900/60 border border-emerald-800/60 rounded-2xl p-3 shadow-xl backdrop-blur-sm">
+            <div id="card-radar" class="card-box bg-emerald-900/60 border border-emerald-800/60 rounded-2xl p-3 shadow-xl backdrop-blur-sm transition-colors duration-300">
                 <div class="flex items-center justify-between mb-2.5 px-1">
                     <h3 class="text-xs font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5">
                         <i data-lucide="map" class="w-4 h-4"></i> เรดาร์ตรวจจับฝนเรียลไทม์
@@ -213,8 +239,33 @@
 
         </div>
 
-        <!-- ================= PAGE 2: หน้าแสดงค่าฝุ่น PM2.5 (10 อันดับสูงสุด) ================= -->
+        <!-- ================= PAGE 2: หน้าแสดงค่าฝุ่น PM2.5 (เพิ่มคำแนะนำสุขภาพ) ================= -->
         <div id="page-pm25" class="hidden space-y-4">
+            <!-- กล่องคำแนะนำสุขภาพตามค่า PM2.5 -->
+            <div class="bg-emerald-900/80 border border-emerald-800/80 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-2">
+                <h3 class="text-xs font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <i data-lucide="heart-pulse" class="w-4 h-4 text-emerald-400"></i> คำแนะนำสุขภาพตามระดับ PM2.5
+                </h3>
+                <div class="grid grid-cols-2 gap-2 text-[11px]">
+                    <div class="bg-emerald-950/60 p-2.5 rounded-xl border border-emerald-600/40">
+                        <span class="font-bold text-emerald-400">0 - 15 µg/m³ (ดีเยี่ยม)</span>
+                        <p class="text-emerald-200/80 mt-0.5">อากาศดีมาก สามารถทำกิจกรรมกลางแจ้งได้ปกติ</p>
+                    </div>
+                    <div class="bg-emerald-950/60 p-2.5 rounded-xl border border-yellow-600/40">
+                        <span class="font-bold text-yellow-300">16 - 25 µg/m³ (ปานกลาง)</span>
+                        <p class="text-emerald-200/80 mt-0.5">ประชาชนทั่วไปทำกิจกรรมได้ แต่กลุ่มเสี่ยงควรระวัง</p>
+                    </div>
+                    <div class="bg-emerald-950/60 p-2.5 rounded-xl border border-orange-600/40">
+                        <span class="font-bold text-orange-400">26 - 37.5 µg/m³ (เริ่มมีผล)</span>
+                        <p class="text-emerald-200/80 mt-0.5">สวมหน้ากากอนามัยเมื่อออกนอกอาคาร</p>
+                    </div>
+                    <div class="bg-emerald-950/60 p-2.5 rounded-xl border border-red-600/40">
+                        <span class="font-bold text-red-400">&gt; 37.5 µg/m³ (มีผลต่อสุขภาพ)</span>
+                        <p class="text-emerald-200/80 mt-0.5">งดกิจกรรมกลางแจ้ง ใช้อุปกรณ์ป้องกัน N95</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="bg-emerald-900/80 border border-emerald-800/80 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-3">
                 <div class="flex items-center justify-between border-b border-emerald-800/60 pb-2.5">
                     <div class="flex items-center gap-2">
@@ -239,8 +290,45 @@
             </div>
         </div>
 
-        <!-- ================= PAGE 3: หน้าแสดงสถานการณ์น้ำและเขื่อน ================= -->
+        <!-- ================= PAGE 3: หน้าแสดงสถานการณ์น้ำ เขื่อน และเบอร์สายด่วน ================= -->
         <div id="page-flood" class="hidden space-y-4">
+            <!-- 📞 สายด่วนแจ้งเหตุภัยพิบัติ -->
+            <div class="bg-emerald-900/80 border border-emerald-800/80 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-2.5">
+                <h3 class="text-xs font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <i data-lucide="phone-call" class="w-4 h-4 text-emerald-400"></i> สายด่วนแจ้งเหตุภัยพิบัติ & ฉุกเฉิน
+                </h3>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <a href="tel:1784" class="bg-emerald-950/70 p-2.5 rounded-xl border border-emerald-800/60 flex items-center justify-between hover:bg-emerald-800/50 transition-colors">
+                        <div>
+                            <span class="font-bold text-white block">ปภ. (1784)</span>
+                            <span class="text-[10px] text-emerald-300/70">แจ้งภัยพิบัติ/น้ำท่วม</span>
+                        </div>
+                        <i data-lucide="phone" class="w-4 h-4 text-emerald-400"></i>
+                    </a>
+                    <a href="tel:1669" class="bg-emerald-950/70 p-2.5 rounded-xl border border-emerald-800/60 flex items-center justify-between hover:bg-emerald-800/50 transition-colors">
+                        <div>
+                            <span class="font-bold text-white block">เจ็บป่วยฉุกเฉิน (1669)</span>
+                            <span class="text-[10px] text-emerald-300/70">หน่วยแพทย์กู้ชีพ</span>
+                        </div>
+                        <i data-lucide="phone" class="w-4 h-4 text-emerald-400"></i>
+                    </a>
+                    <a href="tel:1146" class="bg-emerald-950/70 p-2.5 rounded-xl border border-emerald-800/60 flex items-center justify-between hover:bg-emerald-800/50 transition-colors">
+                        <div>
+                            <span class="font-bold text-white block">ทางหลวงชนบท (1146)</span>
+                            <span class="text-[10px] text-emerald-300/70">สอบถามเส้นทางน้ำท่วม</span>
+                        </div>
+                        <i data-lucide="phone" class="w-4 h-4 text-emerald-400"></i>
+                    </a>
+                    <a href="tel:1193" class="bg-emerald-950/70 p-2.5 rounded-xl border border-emerald-800/60 flex items-center justify-between hover:bg-emerald-800/50 transition-colors">
+                        <div>
+                            <span class="font-bold text-white block">ตำรวจทางหลวง (1193)</span>
+                            <span class="text-[10px] text-emerald-300/70">ช่วยเหลือการเดินทาง</span>
+                        </div>
+                        <i data-lucide="phone" class="w-4 h-4 text-emerald-400"></i>
+                    </a>
+                </div>
+            </div>
+
             <div class="bg-emerald-900/80 border border-emerald-800/80 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-3">
                 <div class="flex items-center justify-between border-b border-emerald-800/60 pb-2.5">
                     <div class="flex items-center gap-2">
@@ -377,8 +465,8 @@
 
         <!-- Footer เครดิตแหล่งข้อมูล -->
         <footer class="mt-6 pt-4 border-t border-emerald-800/50 text-center text-[10px] text-emerald-300/60 space-y-1">
-            <p>ข้อมูลสภาพอากาศ & PM2.5 โดย <a href="https://open-meteo.com/" target="_blank" class="underline hover:text-emerald-300">Open-Meteo</a></p>
-            <p>เรดาร์ฝน & แผนที่ โดย <a href="https://www.rainviewer.com/" target="_blank" class="underline hover:text-emerald-300">RainViewer</a> & <a href="https://www.openstreetmap.org/" target="_blank" class="underline hover:text-emerald-300">OpenStreetMap</a></p>
+            <p>ข้อมูลสภาพอากาศ & PM2.5 โดย <a href="https://open-meteo.com/" target="_blank" class="underline hover:text-emerald-300">Open-Meteo</a>[cite: 1]</p>
+            <p>เรดาร์ฝน & แผนที่ โดย <a href="https://www.rainviewer.com/" target="_blank" class="underline hover:text-emerald-300">RainViewer</a> & <a href="https://www.openstreetmap.org/" target="_blank" class="underline hover:text-emerald-300">OpenStreetMap</a>[cite: 2]</p>
             <p>© ThaiWeatherPulse - พัฒนาเพื่อการเฝ้าระวังอากาศและภัยพิบัติ</p>
         </footer>
 
@@ -389,8 +477,43 @@
     <script>
         let map, userMarker, radarLayer, floodMap;
         let thaiDataCache = null;
+        let isDarkMode = true;
 
         lucide.createIcons();
+
+        // ฟังก์ชันสลับ Theme มืด / สว่าง
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            const body = document.getElementById('body-theme');
+            const header = document.getElementById('header-theme');
+            const nav = document.getElementById('nav-container');
+            const themeIcon = document.getElementById('theme-icon');
+            const searchCard = document.getElementById('card-search');
+            const hourlyCard = document.getElementById('card-hourly');
+            const dailyCard = document.getElementById('card-daily');
+            const radarCard = document.getElementById('card-radar');
+
+            if (isDarkMode) {
+                body.className = "bg-emerald-950 text-slate-100 font-sans min-h-screen pb-8 selection:bg-emerald-500 selection:text-white transition-colors duration-300";
+                header.className = "sticky top-0 z-50 bg-emerald-900/95 backdrop-blur-md border-b border-emerald-800/50 px-4 py-3 shadow-lg transition-colors duration-300";
+                nav.className = "grid grid-cols-3 gap-1.5 bg-emerald-950/80 p-1 rounded-xl border border-emerald-800/60 text-xs font-semibold text-center transition-colors duration-300";
+                themeIcon.setAttribute('data-lucide', 'moon');
+                if(searchCard) searchCard.className = "card-box bg-emerald-900/80 border border-emerald-800/80 rounded-2xl p-3.5 shadow-xl backdrop-blur-sm space-y-2.5 transition-colors duration-300";
+                if(hourlyCard) hourlyCard.className = "card-box bg-emerald-900/60 border border-emerald-800/60 rounded-2xl p-4 shadow-xl backdrop-blur-sm transition-colors duration-300";
+                if(dailyCard) dailyCard.className = "card-box bg-emerald-900/70 border border-emerald-800/70 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-3 transition-colors duration-300";
+                if(radarCard) radarCard.className = "card-box bg-emerald-900/60 border border-emerald-800/60 rounded-2xl p-3 shadow-xl backdrop-blur-sm transition-colors duration-300";
+            } else {
+                body.className = "bg-slate-100 text-slate-800 font-sans min-h-screen pb-8 selection:bg-emerald-500 selection:text-white transition-colors duration-300";
+                header.className = "sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 py-3 shadow-lg transition-colors duration-300";
+                nav.className = "grid grid-cols-3 gap-1.5 bg-slate-200 p-1 rounded-xl border border-slate-300 text-xs font-semibold text-center transition-colors duration-300";
+                themeIcon.setAttribute('data-lucide', 'sun');
+                if(searchCard) searchCard.className = "card-box bg-white border border-slate-200 rounded-2xl p-3.5 shadow-xl backdrop-blur-sm space-y-2.5 transition-colors duration-300";
+                if(hourlyCard) hourlyCard.className = "card-box bg-white border border-slate-200 rounded-2xl p-4 shadow-xl backdrop-blur-sm transition-colors duration-300";
+                if(dailyCard) dailyCard.className = "card-box bg-white border border-slate-200 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-3 transition-colors duration-300";
+                if(radarCard) radarCard.className = "card-box bg-white border border-slate-200 rounded-2xl p-3 shadow-xl backdrop-blur-sm transition-colors duration-300";
+            }
+            lucide.createIcons();
+        }
 
         function switchTab(tabName) {
             const pages = ['home', 'pm25', 'flood'];
@@ -676,7 +799,7 @@
 
         function fetchWeatherData(lat, lon) {
             const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5&timezone=Asia%2FBangkok`;
-            const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FBangkok&forecast_days=5`;
+            const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,weather_code,is_day,uv_index&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=Asia%2FBangkok&forecast_days=5`;
 
             fetch(url)
                 .then(res => res.json())
@@ -685,8 +808,18 @@
                         const pm25Val = Math.round(aqData.current.pm2_5 || 0);
                         const pmEl = document.getElementById('pm25-val');
                         const badgeEl = document.getElementById('pm25-badge');
+                        const alertBanner = document.getElementById('alert-banner');
+                        const alertText = document.getElementById('alert-text');
                         
                         pmEl.innerText = pm25Val;
+
+                        // ตรวจสอบเงื่อนไขแจ้งเตือนภัยด่วน (Emergency Alert)
+                        if (pm25Val > 37.5) {
+                            alertBanner.classList.remove('hidden');
+                            alertText.innerText = `แจ้งเตือนค่าฝุ่น PM2.5 สูงวิกฤต (${pm25Val} µg/m³) ควรงดกิจกรรมกลางแจ้ง!`;
+                        } else {
+                            alertBanner.classList.add('hidden');
+                        }
 
                         if (pm25Val <= 15) {
                             badgeEl.className = 'inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-black/30 border border-white/20 text-emerald-300';
@@ -706,9 +839,14 @@
                 .then(data => {
                     const current = data.current;
                     document.getElementById('temp-display').innerText = `${Math.round(current.temperature_2m)}°C`;
+                    document.getElementById('feels-like').innerText = `รู้สึกเหมือน: ${Math.round(current.apparent_temperature)}°C`;
                     document.getElementById('humidity-val').innerText = `${current.relative_humidity_2m}%`;
                     document.getElementById('wind-val').innerText = `${Math.round(current.wind_speed_10m)} กม./ชม.`;
                     
+                    // ดึงค่า UV Index ปัจจุบัน (จากรายชั่วโมงตัวแรก)
+                    const currentUv = data.hourly && data.hourly.uv_index ? data.hourly.uv_index[0] : 5;
+                    document.getElementById('uv-index-val').innerText = currentUv.toFixed(1);
+
                     const weatherMeta = getWeatherInfo(current.weather_code, current.is_day);
                     document.getElementById('weather-desc').innerText = weatherMeta.desc;
                     document.getElementById('weather-main-icon').className = `${weatherMeta.color} p-2.5 bg-white/20 rounded-2xl border border-white/30 shadow-lg backdrop-blur-md`;
