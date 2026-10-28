@@ -570,7 +570,7 @@
         <!-- Footer เครดิตแหล่งข้อมูล -->
         <footer id="footer-theme" class="mt-6 pt-4 border-t border-white/10 text-center text-[10px] opacity-70 space-y-1">
             <p>ข้อมูลสภาพอากาศ & PM2.5 โดย <a href="https://open-meteo.com/" target="_blank" class="underline hover:opacity-100">Open-Meteo</a>[cite: 1]</p>
-            <p>เรดาร์ฝน โดย <a href="https://www.rainviewer.com/" target="_blank" class="underline hover:opacity-100">RainViewer</a> | แผนที่ โดย <a href="https://www.openstreetmap.org/copyright" target="_blank" class="underline hover:opacity-100">OpenStreetMap contributors</a>[cite: 2]</p>
+            <p>เรดาร์ฝน โดย <a href="https://www.rainviewer.com/" target="_blank" class="underline hover:opacity-100">RainViewer</a> | แผนที่ โดย <a href="https://www.esri.com/" target="_blank" class="underline hover:opacity-100">Esri</a></p>
             <p>© ThaiWeatherPulse - พัฒนาเพื่อการเฝ้าระวังอากาศและภัยพิบัติ</p>
         </footer>
 
@@ -582,7 +582,6 @@
         let map, userMarker, radarLayer, floodMap;
         let thaiDataCache = null;
 
-        // 💾 โหลดค่าธีมสีจาก localStorage ทันทีตั้งแต่รันสคริปต์
         let currentThemeKey = localStorage.getItem('savedWeatherTheme') || 'emerald';
 
         lucide.createIcons();
@@ -919,12 +918,13 @@
 
         function initMap(lat, lon) {
             if (!map) {
-                map = L.map('map', { zoomControl: false }).setView([lat, lon], 10);
+                // 🗺️ ตั้งค่าซูมเริ่มต้นเป็นระดับ 6 (มุมกว้างขึ้น) และจำกัดช่วงซูมระหว่าง 5 ถึง 8
+                map = L.map('map', { zoomControl: false, maxZoom: 8, minZoom: 5 }).setView([13.7563, 100.5018], 6);
                 
-                // 🗺️ เปลี่ยนมาใช้ OpenStreetMap มาตรฐาน (ไร้ปัญหาข้อความ Error ซูมไม่รองรับ)
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 8,
+                    maxNativeZoom: 8,
+                    attribution: 'Tiles &copy; Esri'
                 }).addTo(map);
 
                 const customIcon = L.divIcon({
@@ -939,18 +939,18 @@
                 userMarker = L.marker([lat, lon], { icon: customIcon }).addTo(map);
                 loadRadarOverlay();
             } else {
-                map.setView([lat, lon], 10);
                 userMarker.setLatLng([lat, lon]);
             }
         }
 
         function initFloodMap() {
             if (!floodMap) {
-                floodMap = L.map('flood-map', { zoomControl: false }).setView([13.7563, 100.5018], 6);
+                floodMap = L.map('flood-map', { zoomControl: false, maxZoom: 8, minZoom: 5 }).setView([13.7563, 100.5018], 6);
                 
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 8,
+                    maxNativeZoom: 8,
+                    attribution: 'Tiles &copy; Esri'
                 }).addTo(floodMap);
 
                 fetch('https://api.rainviewer.com/public/weather-maps.json')
@@ -959,7 +959,7 @@
                         if (data && data.radar && data.radar.past && data.radar.past.length > 0) {
                             const latestRadar = data.radar.past[data.radar.past.length - 1];
                             L.tileLayer(`https://tilecache.rainviewer.com${latestRadar.path}/256/{z}/{x}/{y}/2/1_1.png`, {
-                                maxZoom: 19, opacity: 0.65, tileSize: 256, zIndex: 100
+                                maxZoom: 8, maxNativeZoom: 8, opacity: 0.65, tileSize: 256, zIndex: 100
                             }).addTo(floodMap);
                         }
                     });
@@ -979,7 +979,7 @@
                         if (radarLayer) map.removeLayer(radarLayer);
                         
                         radarLayer = L.tileLayer(`https://tilecache.rainviewer.com${radarPath}/256/{z}/{x}/{y}/2/1_1.png`, {
-                            maxZoom: 19, opacity: 0.65, tileSize: 256, zIndex: 100
+                            maxZoom: 8, maxNativeZoom: 8, opacity: 0.65, tileSize: 256, zIndex: 100
                         }).addTo(map);
                     }
                 })
@@ -1345,7 +1345,6 @@
             useCurrentGPS();
         });
 
-        // ลงทะเบียน Service Worker สำหรับ PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
