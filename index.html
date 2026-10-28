@@ -914,12 +914,13 @@
 
         function initMap(lat, lon) {
             if (!map) {
-                map = L.map('map', { zoomControl: false }).setView([lat, lon], 11);
+                map = L.map('map', { zoomControl: false, maxZoom: 19 }).setView([lat, lon], 11);
                 
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-                    maxZoom: 19,
-                    attribution: 'Tiles &copy; Esri'
-                }).addTo(map);
+    maxZoom: 19,
+    maxNativeZoom: 19,
+    attribution: 'Tiles &copy; Esri'
+}).addTo(map);
 
                 const customIcon = L.divIcon({
                     className: 'custom-div-icon',
@@ -940,7 +941,7 @@
 
         function initFloodMap() {
             if (!floodMap) {
-                floodMap = L.map('flood-map', { zoomControl: false }).setView([13.7563, 100.5018], 6);
+                floodMap = L.map('flood-map', { zoomControl: false, maxZoom: 19 }).setView([13.7563, 100.5018], 6);
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
                     maxZoom: 19,
                     attribution: 'Tiles &copy; Esri'
