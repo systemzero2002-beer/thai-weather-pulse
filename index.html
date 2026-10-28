@@ -44,7 +44,7 @@
             50% { opacity: 1.0; }
             100% { transform: scale(1.2, 1.2); opacity: 0.0; }
         }
-        /* ซ่อนแผ่นภาพ Error ที่เกิดจาก RainViewer Tile */
+        /* ซ่อนแผ่นภาพแจ้งเตือน Not Supported ของเรดาร์ฝนเด็ดขาด */
         .leaflet-tile-error {
             display: none !important;
         }
@@ -697,7 +697,11 @@
             currentThemeKey = themeKey;
             
             // 💾 บันทึกธีมสีล่าสุดลง LocalStorage ของเบราว์เซอร์
-            localStorage.setItem('savedWeatherTheme', themeKey);
+            try {
+                localStorage.setItem('savedWeatherTheme', themeKey);
+            } catch (e) {
+                console.error("LocalStorage error:", e);
+            }
 
             const config = themeConfigs[themeKey] || themeConfigs.emerald;
             
@@ -724,10 +728,6 @@
                                    document.querySelector('#page-pm25:not(.hidden)') ? 'pm25' :
                                    document.querySelector('#page-flood:not(.hidden)') ? 'flood' : 'emergency';
             switchTab(currentTabName);
-            
-            if (typeof lastLat !== 'undefined' && typeof lastLon !== 'undefined') {
-                fetchWeatherData(lastLat, lastLon);
-            }
         }
 
         window.addEventListener('click', (e) => {
@@ -918,11 +918,12 @@
 
         function initMap(lat, lon) {
             if (!map) {
-                map = L.map('map', { zoomControl: false, maxZoom: 18 }).setView([lat, lon], 11);
+                // 🔍 ล็อกระดับซูมให้กว้างขึ้นที่ระดับ 8 (ตามภาพที่ 2 ที่คุณต้องการ)
+                map = L.map('map', { zoomControl: false, maxZoom: 9, minZoom: 6 }).setView([lat, lon], 8);
                 
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-                    maxZoom: 18,
-                    maxNativeZoom: 18,
+                    maxZoom: 9,
+                    maxNativeZoom: 9,
                     attribution: 'Tiles &copy; Esri'
                 }).addTo(map);
 
@@ -938,17 +939,17 @@
                 userMarker = L.marker([lat, lon], { icon: customIcon }).addTo(map);
                 loadRadarOverlay();
             } else {
-                map.setView([lat, lon], 11);
+                map.setView([lat, lon], 8);
                 userMarker.setLatLng([lat, lon]);
             }
         }
 
         function initFloodMap() {
             if (!floodMap) {
-                floodMap = L.map('flood-map', { zoomControl: false, maxZoom: 18 }).setView([13.7563, 100.5018], 6);
+                floodMap = L.map('flood-map', { zoomControl: false, maxZoom: 9, minZoom: 6 }).setView([13.7563, 100.5018], 6);
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-                    maxZoom: 18,
-                    maxNativeZoom: 18,
+                    maxZoom: 9,
+                    maxNativeZoom: 9,
                     attribution: 'Tiles &copy; Esri'
                 }).addTo(floodMap);
 
@@ -958,7 +959,7 @@
                         if (data && data.radar && data.radar.past && data.radar.past.length > 0) {
                             const latestRadar = data.radar.past[data.radar.past.length - 1];
                             L.tileLayer(`https://tilecache.rainviewer.com${latestRadar.path}/256/{z}/{x}/{y}/2/1_1.png`, {
-                                maxZoom: 10, maxNativeZoom: 10, opacity: 0.65, tileSize: 256, zIndex: 100
+                                maxZoom: 9, maxNativeZoom: 9, opacity: 0.65, tileSize: 256, zIndex: 100
                             }).addTo(floodMap);
                         }
                     });
@@ -977,9 +978,9 @@
                         
                         if (radarLayer) map.removeLayer(radarLayer);
                         
-                        // จำกัด maxZoom ของ RainViewer ให้แสดงแค่ระดับ 10 ป้องกันการเด้ง Not Supported
+                        // ล็อกระดับซูมเรดาร์ไม่ให้เกินระดับ 9 ป้องกันการเกิด error ไม่รองรับ
                         radarLayer = L.tileLayer(`https://tilecache.rainviewer.com${radarPath}/256/{z}/{x}/{y}/2/1_1.png`, {
-                            maxZoom: 10, maxNativeZoom: 10, opacity: 0.65, tileSize: 256, zIndex: 100
+                            maxZoom: 9, maxNativeZoom: 9, opacity: 0.65, tileSize: 256, zIndex: 100
                         }).addTo(map);
                     }
                 })
@@ -1336,11 +1337,12 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             loadThaiGeographyData();
-            useCurrentGPS();
             
-            // 🔄 ดึงธีมสีที่เคยบันทึกไว้ หากไม่มีให้ใช้ธีมสีเขียว (emerald)
+            // 💾 ดึงค่าธีมสีล่าสุดจาก LocalStorage (ถ้ามี ให้ใช้ค่านั้นทันที)
             const savedTheme = localStorage.getItem('savedWeatherTheme') || 'emerald';
             setTheme(savedTheme);
+
+            useCurrentGPS();
         });
 
         // ลงทะเบียน Service Worker สำหรับ PWA
