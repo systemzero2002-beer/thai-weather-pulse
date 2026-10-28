@@ -343,9 +343,10 @@
 
                 <div class="space-y-2 pt-1">
                     <h3 id="label-flood-title" class="text-xs font-bold flex items-center gap-1.5">
-                        <i data-lucide="shield-alert" class="w-4 h-4 text-amber-500"></i> รายงานพื้นที่เฝ้าระวังอุทกภัยปัจจุบัน
+                        <i data-lucide="shield-alert" class="w-4 h-4 text-amber-500"></i> รายงานพื้นที่เฝ้าระวังอุทกภัยปัจจุบัน (ครบทุกภาค)
                     </h3>
                     <div id="flood-status-list" class="space-y-2 text-xs">
+                        <!-- ภาคเหนือ -->
                         <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
                             <div>
                                 <span class="font-bold text-amber-500">ภาคเหนือ - ลุ่มน้ำยม-น่าน</span>
@@ -353,6 +354,7 @@
                             </div>
                             <span class="bg-amber-500/20 text-amber-500 text-[10px] px-2 py-0.5 rounded-full border border-amber-500/30 font-bold">เฝ้าระวัง</span>
                         </div>
+                        <!-- ภาคกลาง -->
                         <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
                             <div>
                                 <span class="font-bold">ภาคกลาง - ลุ่มน้ำเจ้าพระยา</span>
@@ -360,9 +362,34 @@
                             </div>
                             <span class="bg-emerald-500/20 text-emerald-500 text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold">ปกติ</span>
                         </div>
+                        <!-- ภาคตะวันออกเฉียงเหนือ (อีสาน) -->
                         <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
                             <div>
-                                <span class="font-bold text-sky-500">ภาคใต้ - ฝั่งอ่าวไทย</span>
+                                <span class="font-bold text-sky-500">ภาคตะวันออกเฉียงเหนือ - ลุ่มน้ำชี-มูล</span>
+                                <p class="text-[10px] opacity-80">ปริมาณน้ำในลำน้ำสาขาอยู่ในเกณฑ์ควบคุมได้</p>
+                            </div>
+                            <span class="bg-sky-500/20 text-sky-500 text-[10px] px-2 py-0.5 rounded-full border border-sky-500/30 font-bold">ปกติ</span>
+                        </div>
+                        <!-- ภาคตะวันออก -->
+                        <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
+                            <div>
+                                <span class="font-bold text-emerald-500">ภาคตะวันออก - ลุ่มน้ำบางปะกง-ระยอง</span>
+                                <p class="text-[10px] opacity-80">สถานการณ์น้ำทั่วไปปกติ มีฝนตกเล็กน้อยบางพื้นที่</p>
+                            </div>
+                            <span class="bg-emerald-500/20 text-emerald-500 text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold">ปกติ</span>
+                        </div>
+                        <!-- ภาคตะวันตก -->
+                        <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
+                            <div>
+                                <span class="font-bold text-emerald-500">ภาคตะวันตก - ลุ่มน้ำแม่กลอง-เพชรบุรี</span>
+                                <p class="text-[10px] opacity-80">การบริหารจัดการน้ำในอ่างเก็บน้ำอยู่ในเกณฑ์ปลอดภัย</p>
+                            </div>
+                            <span class="bg-emerald-500/20 text-emerald-500 text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold">ปกติ</span>
+                        </div>
+                        <!-- ภาคใต้ -->
+                        <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
+                            <div>
+                                <span class="font-bold text-sky-500">ภาคใต้ - ฝั่งอ่าวไทย & อันดามัน</span>
                                 <p class="text-[10px] opacity-80">เฝ้าระวังฝนตกสะสมในพื้นที่เชิงเขาและพื้นที่เสี่ยงภัย</p>
                             </div>
                             <span class="bg-sky-500/20 text-sky-500 text-[10px] px-2 py-0.5 rounded-full border border-sky-500/30 font-bold">ติดตามใกล้ชิด</span>
@@ -388,7 +415,7 @@
                 <div class="space-y-2.5 text-xs">
                     <div class="bg-black/20 p-3 rounded-xl border border-white/10 space-y-1.5">
                         <div class="flex justify-between font-bold">
-                            <span>เขื่อนภูมิพล (ต.สามเงา จ.ตาก)</span>
+                            <span>เขื่อนภูมิพล (ต.สามเงา จ.ตาก - ภาคเหนือ)</span>
                             <span class="text-emerald-500 font-bold">ปกติ (68%)</span>
                         </div>
                         <div class="w-full bg-black/20 rounded-full h-2 overflow-hidden">
@@ -402,7 +429,7 @@
 
                     <div class="bg-black/20 p-3 rounded-xl border border-white/10 space-y-1.5">
                         <div class="flex justify-between font-bold">
-                            <span>เขื่อนสิริกิติ์ (ต.ท่าปลา จ.อุตรดิตถ์)</span>
+                            <span>เขื่อนสิริกิติ์ (ต.ท่าปลา จ.อุตรดิตถ์ - ภาคเหนือ)</span>
                             <span class="text-emerald-500 font-bold">ปกติ (72%)</span>
                         </div>
                         <div class="w-full bg-black/20 rounded-full h-2 overflow-hidden">
@@ -416,7 +443,7 @@
 
                     <div class="bg-black/20 p-3 rounded-xl border border-white/10 space-y-1.5">
                         <div class="flex justify-between font-bold">
-                            <span>เขื่อนอุบลรัตน์ (จ.ขอนแก่น)</span>
+                            <span>เขื่อนอุบลรัตน์ (จ.ขอนแก่น - ภาคอีสาน)</span>
                             <span class="text-amber-500 font-bold">เฝ้าระวังสูง (84%)</span>
                         </div>
                         <div class="w-full bg-black/20 rounded-full h-2 overflow-hidden">
@@ -430,7 +457,7 @@
 
                     <div class="bg-black/20 p-3 rounded-xl border border-white/10 space-y-1.5">
                         <div class="flex justify-between font-bold">
-                            <span>เขื่อนป่าสักชลสิทธิ์ (จ.ลพบุรี/สระบุรี)</span>
+                            <span>เขื่อนป่าสักชลสิทธิ์ (จ.ลพบุรี/สระบุรี - ภาคกลาง)</span>
                             <span class="text-emerald-500 font-bold">ปกติ (55%)</span>
                         </div>
                         <div class="w-full bg-black/20 rounded-full h-2 overflow-hidden">
@@ -444,7 +471,7 @@
 
                     <div class="bg-black/20 p-3 rounded-xl border border-white/10 space-y-1.5">
                         <div class="flex justify-between font-bold">
-                            <span>เขื่อนศรีนครินทร์ (จ.กาญจนบุรี)</span>
+                            <span>เขื่อนศรีนครินทร์ (จ.กาญจนบุรี - ภาคตะวันตก)</span>
                             <span class="text-emerald-500 font-bold">ปกติ (76%)</span>
                         </div>
                         <div class="w-full bg-black/20 rounded-full h-2 overflow-hidden">
@@ -556,7 +583,6 @@
 
         lucide.createIcons();
 
-        // 🎨 โครงสร้างค่าสีและการปรับแต่งช่องต่างๆ ให้เป็นโทนเดียวกับธีม
         const themeConfigs = {
             emerald: {
                 body: "bg-emerald-950 text-slate-100",
@@ -671,13 +697,11 @@
             document.getElementById('brand-subtitle').className = `text-[10px] ${config.subtitle} transition-colors`;
             document.getElementById('brand-icon-bg').className = `${config.iconBg} p-2 rounded-xl shadow-md transition-colors`;
 
-            // ปรับการ์ดหลัก
             const cardBoxes = document.querySelectorAll('.card-box');
             cardBoxes.forEach(box => {
                 box.className = `card-box ${config.cardBg} rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-3 transition-colors duration-300`;
             });
 
-            // ปรับหัวข้อ Label
             const labels = ['label-search-title', 'label-hourly-title', 'label-daily-title', 'label-radar-title', 'label-pm25-title', 'label-flood-title'];
             labels.forEach(id => {
                 const el = document.getElementById(id);
@@ -691,7 +715,6 @@
                                    document.querySelector('#page-flood:not(.hidden)') ? 'flood' : 'emergency';
             switchTab(currentTabName);
             
-            // รีเฟรชข้อมูลสภาพอากาศเพื่อให้การ์ดรายชั่วโมงและรายวันปรับสีตามธีมทันที
             if (typeof lastLat !== 'undefined' && typeof lastLon !== 'undefined') {
                 fetchWeatherData(lastLat, lastLon);
             }
