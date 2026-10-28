@@ -122,46 +122,43 @@
                 </div>
             </div>
 
-            <!-- Weather Display Card (มีระบบ Background AI สลับตามสภาพอากาศ) -->
-            <div id="weather-card-bg" class="relative rounded-2xl p-4 shadow-xl overflow-hidden bg-cover bg-center transition-all duration-500 border border-emerald-700/40" style="background-image: linear-gradient(to bottom right, rgba(6, 78, 59, 0.9), rgba(2, 44, 34, 0.95)), url('https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=600&auto=format&fit=crop');">
-                <!-- เลเยอร์เงาดำโปร่งใสทับ เพื่อให้ตัวหนังสืออ่านง่าย -->
-                <div class="absolute inset-0 bg-emerald-950/75 backdrop-blur-[2px]"></div>
+            <!-- Weather Display Card (เปลี่ยนพื้นหลังอัตโนมัติตามสภาพอากาศแบบพรีเมียม) -->
+            <div id="weather-card-bg" class="rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-white/10 bg-gradient-to-br from-emerald-800 to-teal-950 relative overflow-hidden">
+                <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
                 
-                <div class="relative z-10">
-                    <div class="flex items-start justify-between mb-3">
-                        <div>
-                            <div class="flex items-center gap-1.5 text-emerald-300 mb-1">
-                                <i data-lucide="navigation" class="w-4 h-4"></i>
-                                <span id="location-text" class="text-sm font-semibold tracking-wide">กำลังระบุพื้นที่...</span>
-                            </div>
-                            <h2 id="temp-display" class="text-4xl font-extrabold text-white tracking-tight">--°C</h2>
-                            
-                            <div class="flex items-center gap-2 mt-1">
-                                <p id="weather-desc" class="text-xs text-emerald-200/90 font-medium">กำลังโหลด...</p>
-                                <span class="text-emerald-400/60">•</span>
-                                <div id="pm25-badge" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-emerald-950/80 border border-emerald-700/50 text-emerald-300">
-                                    <i data-lucide="wind" class="w-3 h-3"></i> PM2.5: <span id="pm25-val">--</span> µg/m³
-                                </div>
-                            </div>
+                <div class="flex items-start justify-between mb-3 relative z-10">
+                    <div>
+                        <div class="flex items-center gap-1.5 text-white/90 mb-1 font-medium">
+                            <i data-lucide="navigation" class="w-4 h-4"></i>
+                            <span id="location-text" class="text-sm tracking-wide">กำลังระบุพื้นที่...</span>
                         </div>
-                        <div id="weather-main-icon" class="text-amber-400 p-2 bg-emerald-900/60 rounded-2xl border border-emerald-700/50 shadow-md">
-                            <i data-lucide="sun" class="w-12 h-12"></i>
+                        <h2 id="temp-display" class="text-4xl font-extrabold text-white tracking-tight">--°C</h2>
+                        
+                        <div class="flex items-center gap-2 mt-1">
+                            <p id="weather-desc" class="text-xs text-white/90 font-medium">กำลังโหลด...</p>
+                            <span class="text-white/60">•</span>
+                            <div id="pm25-badge" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-black/30 border border-white/20 text-white">
+                                <i data-lucide="wind" class="w-3 h-3"></i> PM2.5: <span id="pm25-val">--</span> µg/m³
+                            </div>
                         </div>
                     </div>
+                    <div id="weather-main-icon" class="text-white p-2.5 bg-white/20 rounded-2xl border border-white/30 shadow-lg backdrop-blur-md">
+                        <i data-lucide="sun" class="w-10 h-10"></i>
+                    </div>
+                </div>
 
-                    <div class="grid grid-cols-3 gap-2 pt-3 border-t border-emerald-700/40 text-center">
-                        <div class="bg-emerald-900/50 p-2 rounded-xl border border-emerald-700/30">
-                            <p class="text-[10px] text-emerald-300/80 flex items-center justify-center gap-1"><i data-lucide="droplets" class="w-3 h-3"></i>ความชื้น</p>
-                            <p id="humidity-val" class="text-sm font-bold text-emerald-100 mt-0.5">--%</p>
-                        </div>
-                        <div class="bg-emerald-900/50 p-2 rounded-xl border border-emerald-700/30">
-                            <p class="text-[10px] text-emerald-300/80 flex items-center justify-center gap-1"><i data-lucide="wind" class="w-3 h-3"></i>ความเร็วลม</p>
-                            <p id="wind-val" class="text-sm font-bold text-emerald-100 mt-0.5">-- กม./ชม.</p>
-                        </div>
-                        <div class="bg-emerald-900/50 p-2 rounded-xl border border-emerald-700/30">
-                            <p class="text-[10px] text-emerald-300/80 flex items-center justify-center gap-1"><i data-lucide="cloud-rain" class="w-3 h-3"></i>ฝนจะตกใน</p>
-                            <p id="rain-countdown-val" class="text-xs font-bold text-emerald-300 mt-1">-- ชม.</p>
-                        </div>
+                <div class="grid grid-cols-3 gap-2 pt-3 border-t border-white/20 text-center relative z-10">
+                    <div class="bg-black/20 backdrop-blur-sm p-2 rounded-xl border border-white/10">
+                        <p class="text-[10px] text-white/80 flex items-center justify-center gap-1"><i data-lucide="droplets" class="w-3 h-3"></i>ความชื้น</p>
+                        <p id="humidity-val" class="text-sm font-bold text-white mt-0.5">--%</p>
+                    </div>
+                    <div class="bg-black/20 backdrop-blur-sm p-2 rounded-xl border border-white/10">
+                        <p class="text-[10px] text-white/80 flex items-center justify-center gap-1"><i data-lucide="wind" class="w-3 h-3"></i>ความเร็วลม</p>
+                        <p id="wind-val" class="text-sm font-bold text-white mt-0.5">-- กม./ชม.</p>
+                    </div>
+                    <div class="bg-black/20 backdrop-blur-sm p-2 rounded-xl border border-white/10">
+                        <p class="text-[10px] text-white/80 flex items-center justify-center gap-1"><i data-lucide="cloud-rain" class="w-3 h-3"></i>ฝนจะตกใน</p>
+                        <p id="rain-countdown-val" class="text-xs font-bold text-white mt-1">-- ชม.</p>
                     </div>
                 </div>
             </div>
@@ -522,7 +519,7 @@
             const subdistCode = document.getElementById('subdistrict-select').value;
             if (!subdistCode || !thaiDataCache) return;
 
-            const item = thaiDataCache.find(i => item.subdistrictCode == subdistCode);
+            const item = thaiDataCache.find(i => i.subdistrictCode == subdistCode);
             if (item) {
                 const isBkk = (item.provinceCode == 10 || item.provinceCode == '10');
                 const subLabel = isBkk ? `แขวง${item.subdistrictNameTh}` : `ตำบล${item.subdistrictNameTh}`;
@@ -657,31 +654,31 @@
             return weatherMap[code] || { desc: 'สภาพอากาศทั่วไป', icon: 'cloud', color: 'text-emerald-300' };
         }
 
-        // ฟังก์ชันเลือกรูป Background AI ตามรหัสสภาพอากาศและกลางวัน/กลางคืน
+        // ฟังก์ชันเปลี่ยนสีพื้นหลังการ์ดอัตโนมัติตามสภาพอากาศ (สวยงามและโหลดไวแน่นอน)
         function updateWeatherBackground(code, isDay) {
             const cardBg = document.getElementById('weather-card-bg');
-            let bgUrl = 'https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=600&auto=format&fit=crop'; // ค่าเริ่มต้น (เมฆสวยๆ)
-
+            
             if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) {
-                // ฝนตก
-                bgUrl = 'https://images.unsplash.com/photo-1519692933481-e162a57d6721?q=80&w=600&auto=format&fit=crop';
+                // ฝนตก: โทนฟ้าเข้มหม่นๆ สไตล์ฝน
+                cardBg.className = "rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-sky-400/30 bg-gradient-to-br from-slate-800 via-sky-950 to-blue-950 relative overflow-hidden";
             } else if ([95].includes(code)) {
-                // พายุฝนฟ้าคะนอง
-                bgUrl = 'https://images.unsplash.com/photo-1605727216801-e27ce1d0cc28?q=80&w=600&auto=format&fit=crop';
+                // พายุฝนฟ้าคะนอง: โทนม่วงเข้มดาร์กๆ
+                cardBg.className = "rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-purple-400/30 bg-gradient-to-br from-purple-950 via-slate-900 to-indigo-950 relative overflow-hidden";
             } else if ([3, 45, 48].includes(code)) {
-                // เมฆมาก / หมอก
-                bgUrl = 'https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=600&auto=format&fit=crop';
+                // เมฆมาก / หมอก: โทนเทาเขียวพรีเมียม
+                cardBg.className = "rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-slate-400/30 bg-gradient-to-br from-slate-800 via-teal-950 to-slate-950 relative overflow-hidden";
             } else if (code === 0 || code === 1) {
                 if (isDay) {
-                    // แดดจัด / แจ่มใสกลางวัน
-                    bgUrl = 'https://images.unsplash.com/photo-1601297183305-6df142704ea2?q=80&w=600&auto=format&fit=crop';
+                    // แดดจัด / แจ่มใสกลางวัน: โทนฟ้าสว่างอมทองสดใส
+                    cardBg.className = "rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-amber-400/30 bg-gradient-to-br from-sky-600 via-teal-800 to-emerald-950 relative overflow-hidden";
                 } else {
-                    // ท้องฟ้าปลอดโปร่งกลางคืน
-                    bgUrl = 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=600&auto=format&fit=crop';
+                    // กลางคืน: โทนน้ำเงินเข้มลึกลับ
+                    cardBg.className = "rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-blue-400/30 bg-gradient-to-br from-indigo-950 via-slate-900 to-blue-950 relative overflow-hidden";
                 }
+            } else {
+                // ค่าเริ่มต้น
+                cardBg.className = "rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-emerald-700/40 bg-gradient-to-br from-emerald-800 to-teal-950 relative overflow-hidden";
             }
-
-            cardBg.style.backgroundImage = `linear-gradient(to bottom right, rgba(6, 78, 59, 0.85), rgba(2, 44, 34, 0.9)), url('${bgUrl}')`;
         }
 
         function fetchWeatherData(lat, lon) {
@@ -699,13 +696,13 @@
                         pmEl.innerText = pm25Val;
 
                         if (pm25Val <= 15) {
-                            badgeEl.className = 'inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-emerald-950/80 border border-emerald-600/50 text-emerald-400';
+                            badgeEl.className = 'inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-black/30 border border-white/20 text-emerald-300';
                         } else if (pm25Val <= 25) {
-                            badgeEl.className = 'inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-yellow-950/80 border border-yellow-600/50 text-yellow-300';
+                            badgeEl.className = 'inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-black/30 border border-white/20 text-yellow-300';
                         } else if (pm25Val <= 37.5) {
-                            badgeEl.className = 'inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-orange-950/80 border border-orange-600/50 text-orange-400';
+                            badgeEl.className = 'inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-black/30 border border-white/20 text-orange-300';
                         } else {
-                            badgeEl.className = 'inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-red-950/80 border border-red-600/50 text-red-400';
+                            badgeEl.className = 'inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-black/30 border border-white/20 text-red-400';
                         }
                     }
                 })
@@ -721,10 +718,10 @@
                     
                     const weatherMeta = getWeatherInfo(current.weather_code, current.is_day);
                     document.getElementById('weather-desc').innerText = weatherMeta.desc;
-                    document.getElementById('weather-main-icon').className = `${weatherMeta.color} p-2 bg-emerald-900/60 rounded-2xl border border-emerald-700/50 shadow-md`;
-                    document.getElementById('weather-main-icon').innerHTML = `<i data-lucide="${weatherMeta.icon}" class="w-12 h-12"></i>`;
+                    document.getElementById('weather-main-icon').className = `${weatherMeta.color} p-2.5 bg-white/20 rounded-2xl border border-white/30 shadow-lg backdrop-blur-md`;
+                    document.getElementById('weather-main-icon').innerHTML = `<i data-lucide="${weatherMeta.icon}" class="w-10 h-10"></i>`;
 
-                    // เปลี่ยนภาพ Background ตามสภาพอากาศปัจจุบัน
+                    // อัปเดตสีพื้นหลังการ์ดตามสภาพอากาศ
                     updateWeatherBackground(current.weather_code, current.is_day);
 
                     const hourly = data.hourly || {};
@@ -754,13 +751,13 @@
                     const countdownEl = document.getElementById('rain-countdown-val');
                     if (rainInHours === 0) {
                         countdownEl.innerText = 'ฝนตกตอนนี้';
-                        countdownEl.className = 'text-xs font-bold text-amber-400 mt-1 animate-pulse';
+                        countdownEl.className = 'text-xs font-bold text-amber-300 mt-1 animate-pulse';
                     } else if (rainInHours > 0) {
                         countdownEl.innerText = `อีก ${rainInHours} ชม.`;
-                        countdownEl.className = 'text-xs font-bold text-cyan-400 mt-1';
+                        countdownEl.className = 'text-xs font-bold text-cyan-300 mt-1';
                     } else {
                         countdownEl.innerText = 'ไม่มีฝน 20 ชม.';
-                        countdownEl.className = 'text-[11px] font-bold text-emerald-300 mt-1';
+                        countdownEl.className = 'text-[11px] font-bold text-white/90 mt-1';
                     }
 
                     const hourlyContainer = document.getElementById('hourly-container');
