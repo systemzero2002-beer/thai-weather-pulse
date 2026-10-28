@@ -44,6 +44,10 @@
             50% { opacity: 1.0; }
             100% { transform: scale(1.2, 1.2); opacity: 0.0; }
         }
+        /* ซ่อนแผ่นภาพ Error ที่เกิดจาก RainViewer Tile */
+        .leaflet-tile-error {
+            display: none !important;
+        }
     </style>
 </head>
 <body id="body-theme" class="bg-emerald-950 text-slate-100 font-sans min-h-screen pb-8 selection:bg-emerald-500 selection:text-white transition-colors duration-300">
@@ -691,6 +695,10 @@
 
         function setTheme(themeKey) {
             currentThemeKey = themeKey;
+            
+            // 💾 บันทึกธีมสีล่าสุดลง LocalStorage ของเบราว์เซอร์
+            localStorage.setItem('savedWeatherTheme', themeKey);
+
             const config = themeConfigs[themeKey] || themeConfigs.emerald;
             
             document.getElementById('body-theme').className = `${config.body} font-sans min-h-screen pb-8 selection:bg-emerald-500 selection:text-white transition-colors duration-300`;
@@ -910,11 +918,11 @@
 
         function initMap(lat, lon) {
             if (!map) {
-                map = L.map('map', { zoomControl: false, maxZoom: 19 }).setView([lat, lon], 11);
+                map = L.map('map', { zoomControl: false, maxZoom: 18 }).setView([lat, lon], 11);
                 
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-                    maxZoom: 19,
-                    maxNativeZoom: 19,
+                    maxZoom: 18,
+                    maxNativeZoom: 18,
                     attribution: 'Tiles &copy; Esri'
                 }).addTo(map);
 
@@ -937,10 +945,10 @@
 
         function initFloodMap() {
             if (!floodMap) {
-                floodMap = L.map('flood-map', { zoomControl: false, maxZoom: 19 }).setView([13.7563, 100.5018], 6);
+                floodMap = L.map('flood-map', { zoomControl: false, maxZoom: 18 }).setView([13.7563, 100.5018], 6);
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-                    maxZoom: 19,
-                    maxNativeZoom: 19,
+                    maxZoom: 18,
+                    maxNativeZoom: 18,
                     attribution: 'Tiles &copy; Esri'
                 }).addTo(floodMap);
 
@@ -950,7 +958,7 @@
                         if (data && data.radar && data.radar.past && data.radar.past.length > 0) {
                             const latestRadar = data.radar.past[data.radar.past.length - 1];
                             L.tileLayer(`https://tilecache.rainviewer.com${latestRadar.path}/256/{z}/{x}/{y}/2/1_1.png`, {
-                                maxZoom: 19, maxNativeZoom: 19, opacity: 0.65, tileSize: 256, zIndex: 100
+                                maxZoom: 10, maxNativeZoom: 10, opacity: 0.65, tileSize: 256, zIndex: 100
                             }).addTo(floodMap);
                         }
                     });
@@ -969,8 +977,9 @@
                         
                         if (radarLayer) map.removeLayer(radarLayer);
                         
+                        // จำกัด maxZoom ของ RainViewer ให้แสดงแค่ระดับ 10 ป้องกันการเด้ง Not Supported
                         radarLayer = L.tileLayer(`https://tilecache.rainviewer.com${radarPath}/256/{z}/{x}/{y}/2/1_1.png`, {
-                            maxZoom: 19, maxNativeZoom: 19, opacity: 0.65, tileSize: 256, zIndex: 100
+                            maxZoom: 10, maxNativeZoom: 10, opacity: 0.65, tileSize: 256, zIndex: 100
                         }).addTo(map);
                     }
                 })
@@ -1328,7 +1337,10 @@
         window.addEventListener('DOMContentLoaded', () => {
             loadThaiGeographyData();
             useCurrentGPS();
-            setTheme('emerald');
+            
+            // 🔄 ดึงธีมสีที่เคยบันทึกไว้ หากไม่มีให้ใช้ธีมสีเขียว (emerald)
+            const savedTheme = localStorage.getItem('savedWeatherTheme') || 'emerald';
+            setTheme(savedTheme);
         });
 
         // ลงทะเบียน Service Worker สำหรับ PWA
