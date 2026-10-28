@@ -122,43 +122,46 @@
                 </div>
             </div>
 
-            <!-- Weather Display Card -->
-            <div class="bg-gradient-to-br from-emerald-900/80 to-emerald-950/90 border border-emerald-800/60 rounded-2xl p-4 shadow-xl backdrop-blur-sm relative overflow-hidden">
-                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
+            <!-- Weather Display Card (มีระบบ Background AI สลับตามสภาพอากาศ) -->
+            <div id="weather-card-bg" class="relative rounded-2xl p-4 shadow-xl overflow-hidden bg-cover bg-center transition-all duration-500 border border-emerald-700/40" style="background-image: linear-gradient(to bottom right, rgba(6, 78, 59, 0.9), rgba(2, 44, 34, 0.95)), url('https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=600&auto=format&fit=crop');">
+                <!-- เลเยอร์เงาดำโปร่งใสทับ เพื่อให้ตัวหนังสืออ่านง่าย -->
+                <div class="absolute inset-0 bg-emerald-950/75 backdrop-blur-[2px]"></div>
                 
-                <div class="flex items-start justify-between mb-3">
-                    <div>
-                        <div class="flex items-center gap-1.5 text-emerald-400 mb-1">
-                            <i data-lucide="navigation" class="w-4 h-4"></i>
-                            <span id="location-text" class="text-sm font-semibold tracking-wide">กำลังระบุพื้นที่...</span>
-                        </div>
-                        <h2 id="temp-display" class="text-4xl font-extrabold text-white tracking-tight">--°C</h2>
-                        
-                        <div class="flex items-center gap-2 mt-1">
-                            <p id="weather-desc" class="text-xs text-emerald-200/80">กำลังโหลด...</p>
-                            <span class="text-emerald-500/60">•</span>
-                            <div id="pm25-badge" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-emerald-950/60 border border-emerald-800/50 text-emerald-300">
-                                <i data-lucide="wind" class="w-3 h-3"></i> PM2.5: <span id="pm25-val">--</span> µg/m³
+                <div class="relative z-10">
+                    <div class="flex items-start justify-between mb-3">
+                        <div>
+                            <div class="flex items-center gap-1.5 text-emerald-300 mb-1">
+                                <i data-lucide="navigation" class="w-4 h-4"></i>
+                                <span id="location-text" class="text-sm font-semibold tracking-wide">กำลังระบุพื้นที่...</span>
+                            </div>
+                            <h2 id="temp-display" class="text-4xl font-extrabold text-white tracking-tight">--°C</h2>
+                            
+                            <div class="flex items-center gap-2 mt-1">
+                                <p id="weather-desc" class="text-xs text-emerald-200/90 font-medium">กำลังโหลด...</p>
+                                <span class="text-emerald-400/60">•</span>
+                                <div id="pm25-badge" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-emerald-950/80 border border-emerald-700/50 text-emerald-300">
+                                    <i data-lucide="wind" class="w-3 h-3"></i> PM2.5: <span id="pm25-val">--</span> µg/m³
+                                </div>
                             </div>
                         </div>
+                        <div id="weather-main-icon" class="text-amber-400 p-2 bg-emerald-900/60 rounded-2xl border border-emerald-700/50 shadow-md">
+                            <i data-lucide="sun" class="w-12 h-12"></i>
+                        </div>
                     </div>
-                    <div id="weather-main-icon" class="text-amber-400 p-2 bg-emerald-800/40 rounded-2xl border border-emerald-700/30">
-                        <i data-lucide="sun" class="w-12 h-12"></i>
-                    </div>
-                </div>
 
-                <div class="grid grid-cols-3 gap-2 pt-3 border-t border-emerald-800/50 text-center">
-                    <div class="bg-emerald-950/40 p-2 rounded-xl border border-emerald-800/30">
-                        <p class="text-[10px] text-emerald-300/70 flex items-center justify-center gap-1"><i data-lucide="droplets" class="w-3 h-3"></i>ความชื้น</p>
-                        <p id="humidity-val" class="text-sm font-bold text-emerald-100 mt-0.5">--%</p>
-                    </div>
-                    <div class="bg-emerald-950/40 p-2 rounded-xl border border-emerald-800/30">
-                        <p class="text-[10px] text-emerald-300/70 flex items-center justify-center gap-1"><i data-lucide="wind" class="w-3 h-3"></i>ความเร็วลม</p>
-                        <p id="wind-val" class="text-sm font-bold text-emerald-100 mt-0.5">-- กม./ชม.</p>
-                    </div>
-                    <div class="bg-emerald-950/40 p-2 rounded-xl border border-emerald-800/30">
-                        <p class="text-[10px] text-emerald-300/70 flex items-center justify-center gap-1"><i data-lucide="cloud-rain" class="w-3 h-3"></i>ฝนจะตกใน</p>
-                        <p id="rain-countdown-val" class="text-xs font-bold text-emerald-400 mt-1">-- ชม.</p>
+                    <div class="grid grid-cols-3 gap-2 pt-3 border-t border-emerald-700/40 text-center">
+                        <div class="bg-emerald-900/50 p-2 rounded-xl border border-emerald-700/30">
+                            <p class="text-[10px] text-emerald-300/80 flex items-center justify-center gap-1"><i data-lucide="droplets" class="w-3 h-3"></i>ความชื้น</p>
+                            <p id="humidity-val" class="text-sm font-bold text-emerald-100 mt-0.5">--%</p>
+                        </div>
+                        <div class="bg-emerald-900/50 p-2 rounded-xl border border-emerald-700/30">
+                            <p class="text-[10px] text-emerald-300/80 flex items-center justify-center gap-1"><i data-lucide="wind" class="w-3 h-3"></i>ความเร็วลม</p>
+                            <p id="wind-val" class="text-sm font-bold text-emerald-100 mt-0.5">-- กม./ชม.</p>
+                        </div>
+                        <div class="bg-emerald-900/50 p-2 rounded-xl border border-emerald-700/30">
+                            <p class="text-[10px] text-emerald-300/80 flex items-center justify-center gap-1"><i data-lucide="cloud-rain" class="w-3 h-3"></i>ฝนจะตกใน</p>
+                            <p id="rain-countdown-val" class="text-xs font-bold text-emerald-300 mt-1">-- ชม.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -241,7 +244,6 @@
 
         <!-- ================= PAGE 3: หน้าแสดงสถานการณ์น้ำและเขื่อน ================= -->
         <div id="page-flood" class="hidden space-y-4">
-            <!-- แผนที่เรดาร์และสถานการณ์น้ำท่วม -->
             <div class="bg-emerald-900/80 border border-emerald-800/80 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-3">
                 <div class="flex items-center justify-between border-b border-emerald-800/60 pb-2.5">
                     <div class="flex items-center gap-2">
@@ -288,7 +290,7 @@
                 </div>
             </div>
 
-            <!-- เพิ่มส่วน: ข้อมูลระดับน้ำในเขื่อนสำคัญทั่วประเทศ -->
+            <!-- ข้อมูลระดับน้ำในเขื่อนสำคัญ -->
             <div class="bg-emerald-900/80 border border-emerald-800/80 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-3">
                 <div class="flex items-center justify-between border-b border-emerald-800/60 pb-2.5">
                     <div class="flex items-center gap-2">
@@ -303,7 +305,6 @@
                 </div>
 
                 <div class="space-y-2.5 text-xs">
-                    <!-- เขื่อนภูมิพล -->
                     <div class="bg-emerald-950/60 p-3 rounded-xl border border-emerald-800/40 space-y-1.5">
                         <div class="flex justify-between font-bold text-white">
                             <span>เขื่อนภูมิพล (ต.สามเงา จ.ตาก)</span>
@@ -318,7 +319,6 @@
                         </div>
                     </div>
 
-                    <!-- เขื่อนสิริกิติ์ -->
                     <div class="bg-emerald-950/60 p-3 rounded-xl border border-emerald-800/40 space-y-1.5">
                         <div class="flex justify-between font-bold text-white">
                             <span>เขื่อนสิริกิติ์ (ต.ท่าปลา จ.อุตรดิตถ์)</span>
@@ -333,7 +333,6 @@
                         </div>
                     </div>
 
-                    <!-- เขื่อนอุบลรัตน์ -->
                     <div class="bg-emerald-950/60 p-3 rounded-xl border border-emerald-800/40 space-y-1.5">
                         <div class="flex justify-between font-bold text-white">
                             <span>เขื่อนอุบลรัตน์ (จ.ขอนแก่น)</span>
@@ -348,7 +347,6 @@
                         </div>
                     </div>
 
-                    <!-- เขื่อนป่าสักชลสิทธิ์ -->
                     <div class="bg-emerald-950/60 p-3 rounded-xl border border-emerald-800/40 space-y-1.5">
                         <div class="flex justify-between font-bold text-white">
                             <span>เขื่อนป่าสักชลสิทธิ์ (จ.ลพบุรี/สระบุรี)</span>
@@ -363,7 +361,6 @@
                         </div>
                     </div>
 
-                    <!-- เขื่อนศรีนครินทร์ -->
                     <div class="bg-emerald-950/60 p-3 rounded-xl border border-emerald-800/40 space-y-1.5">
                         <div class="flex justify-between font-bold text-white">
                             <span>เขื่อนศรีนครินทร์ (จ.กาญจนบุรี)</span>
@@ -375,21 +372,6 @@
                         <div class="flex justify-between text-[10px] text-emerald-300/70">
                             <span>ปริมาณน้ำ: 13,420 ล้าน ลบ.ม.</span>
                             <span>รับได้อีก: 4,320 ล้าน ลบ.ม.</span>
-                        </div>
-                    </div>
-
-                    <!-- เขื่อนแก่งกระจาน -->
-                    <div class="bg-emerald-950/60 p-3 rounded-xl border border-emerald-800/40 space-y-1.5">
-                        <div class="flex justify-between font-bold text-white">
-                            <span>เขื่อนแก่งกระจาน (จ.เพชรบุรี)</span>
-                            <span class="text-emerald-400">ปกติ (65%)</span>
-                        </div>
-                        <div class="w-full bg-emerald-900/80 rounded-full h-2 overflow-hidden">
-                            <div class="bg-emerald-500 h-2 rounded-full" style="width: 65%"></div>
-                        </div>
-                        <div class="flex justify-between text-[10px] text-emerald-300/70">
-                            <span>ปริมาณน้ำ: 468 ล้าน ลบ.ม.</span>
-                            <span>รับได้อีก: 252 ล้าน ลบ.ม.</span>
                         </div>
                     </div>
                 </div>
@@ -540,7 +522,7 @@
             const subdistCode = document.getElementById('subdistrict-select').value;
             if (!subdistCode || !thaiDataCache) return;
 
-            const item = thaiDataCache.find(i => i.subdistrictCode == subdistCode);
+            const item = thaiDataCache.find(i => item.subdistrictCode == subdistCode);
             if (item) {
                 const isBkk = (item.provinceCode == 10 || item.provinceCode == '10');
                 const subLabel = isBkk ? `แขวง${item.subdistrictNameTh}` : `ตำบล${item.subdistrictNameTh}`;
@@ -675,6 +657,33 @@
             return weatherMap[code] || { desc: 'สภาพอากาศทั่วไป', icon: 'cloud', color: 'text-emerald-300' };
         }
 
+        // ฟังก์ชันเลือกรูป Background AI ตามรหัสสภาพอากาศและกลางวัน/กลางคืน
+        function updateWeatherBackground(code, isDay) {
+            const cardBg = document.getElementById('weather-card-bg');
+            let bgUrl = 'https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=600&auto=format&fit=crop'; // ค่าเริ่มต้น (เมฆสวยๆ)
+
+            if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) {
+                // ฝนตก
+                bgUrl = 'https://images.unsplash.com/photo-1519692933481-e162a57d6721?q=80&w=600&auto=format&fit=crop';
+            } else if ([95].includes(code)) {
+                // พายุฝนฟ้าคะนอง
+                bgUrl = 'https://images.unsplash.com/photo-1605727216801-e27ce1d0cc28?q=80&w=600&auto=format&fit=crop';
+            } else if ([3, 45, 48].includes(code)) {
+                // เมฆมาก / หมอก
+                bgUrl = 'https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=600&auto=format&fit=crop';
+            } else if (code === 0 || code === 1) {
+                if (isDay) {
+                    // แดดจัด / แจ่มใสกลางวัน
+                    bgUrl = 'https://images.unsplash.com/photo-1601297183305-6df142704ea2?q=80&w=600&auto=format&fit=crop';
+                } else {
+                    // ท้องฟ้าปลอดโปร่งกลางคืน
+                    bgUrl = 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=600&auto=format&fit=crop';
+                }
+            }
+
+            cardBg.style.backgroundImage = `linear-gradient(to bottom right, rgba(6, 78, 59, 0.85), rgba(2, 44, 34, 0.9)), url('${bgUrl}')`;
+        }
+
         function fetchWeatherData(lat, lon) {
             const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5&timezone=Asia%2FBangkok`;
             const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FBangkok&forecast_days=5`;
@@ -712,8 +721,11 @@
                     
                     const weatherMeta = getWeatherInfo(current.weather_code, current.is_day);
                     document.getElementById('weather-desc').innerText = weatherMeta.desc;
-                    document.getElementById('weather-main-icon').className = `${weatherMeta.color} p-2 bg-emerald-800/40 rounded-2xl border border-emerald-700/30`;
+                    document.getElementById('weather-main-icon').className = `${weatherMeta.color} p-2 bg-emerald-900/60 rounded-2xl border border-emerald-700/50 shadow-md`;
                     document.getElementById('weather-main-icon').innerHTML = `<i data-lucide="${weatherMeta.icon}" class="w-12 h-12"></i>`;
+
+                    // เปลี่ยนภาพ Background ตามสภาพอากาศปัจจุบัน
+                    updateWeatherBackground(current.weather_code, current.is_day);
 
                     const hourly = data.hourly || {};
                     const timeArr = hourly.time || [];
