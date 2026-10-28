@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ThaiWeatherPulse - 5-Day Forecast</title>
+    <title>ThaiWeatherPulse - 5-Day Forecast & PM2.5</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Leaflet CSS -->
@@ -49,7 +49,7 @@
                 </div>
                 <div>
                     <h1 class="text-lg font-bold leading-none text-emerald-400">ThaiWeatherPulse</h1>
-                    <p class="text-[10px] text-emerald-200/70">พยากรณ์อากาศล่วงหน้า 5 วัน & เรดาร์ฝน</p>
+                    <p class="text-[10px] text-emerald-200/70">พยากรณ์อากาศล่วงหน้า 5 วัน & ฝุ่น PM2.5</p>
                 </div>
             </div>
             <button onclick="useCurrentGPS()" class="bg-emerald-800/80 hover:bg-emerald-700 px-3 py-1.5 rounded-xl text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition-all border border-emerald-700/50 active:scale-95" title="ใช้พิกัด GPS ปัจจุบัน">
@@ -103,7 +103,7 @@
             </div>
         </div>
 
-        <!-- Weather Display Card -->
+        <!-- Weather Display Card (พร้อม PM2.5 ในจุดที่วงกลม) -->
         <div class="bg-gradient-to-br from-emerald-900/80 to-emerald-950/90 border border-emerald-800/60 rounded-2xl p-4 shadow-xl backdrop-blur-sm relative overflow-hidden">
             <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
             
@@ -114,7 +114,15 @@
                         <span id="location-text" class="text-sm font-semibold tracking-wide">กำลังระบุพื้นที่...</span>
                     </div>
                     <h2 id="temp-display" class="text-4xl font-extrabold text-white tracking-tight">--°C</h2>
-                    <p id="weather-desc" class="text-xs text-emerald-200/80 mt-1">กำลังโหลดข้อมูลสภาพอากาศ...</p>
+                    
+                    <div class="flex items-center gap-2 mt-1">
+                        <p id="weather-desc" class="text-xs text-emerald-200/80">กำลังโหลด...</p>
+                        <span class="text-emerald-500/60">•</span>
+                        <!-- จุดที่เพิ่ม PM2.5 ตามที่คุณต้องการ -->
+                        <div id="pm25-badge" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-emerald-950/60 border border-emerald-800/50 text-emerald-300">
+                            <i data-lucide="wind" class="w-3 h-3"></i> PM2.5: <span id="pm25-val">--</span> µg/m³
+                        </div>
+                    </div>
                 </div>
                 <div id="weather-main-icon" class="text-amber-400 p-2 bg-emerald-800/40 rounded-2xl border border-emerald-700/30">
                     <i data-lucide="sun" class="w-12 h-12"></i>
@@ -416,9 +424,37 @@
         }
 
         function fetchWeatherData(lat, lon) {
-            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FBangkok&forecast_days=5`;
+            // ดึงข้อมูลพ่วง air_quality (pm2_5) จาก Open-Meteo API
+            const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5&timezone=Asia%2FBangkok`;
+            const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FBangkok&forecast_days=5`;
 
+            // ดึงค่า PM2.5
             fetch(url)
+                .then(res => res.json())
+                .then(aqData => {
+                    if (aqData && aqData.current) {
+                        const pm25Val = Math.round(aqData.current.pm2_5 || 0);
+                        const pmEl = document.getElementById('pm25-val');
+                        const badgeEl = document.getElementById('pm25-badge');
+                        
+                        pmEl.innerText = pm25Val;
+
+                        // เปลี่ยนสีตามมาตรฐานค่าฝุ่น PM2.5
+                        if (pm25Val <= 15) {
+                            badgeEl.className = 'inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-emerald-950/80 border border-emerald-600/50 text-emerald-400';
+                        } else if (pm25Val <= 25) {
+                            badgeEl.className = 'inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-yellow-950/80 border border-yellow-600/50 text-yellow-300';
+                        } else if (pm25Val <= 37.5) {
+                            badgeEl.className = 'inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-orange-950/80 border border-orange-600/50 text-orange-400';
+                        } else {
+                            badgeEl.className = 'inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-red-950/80 border border-red-600/50 text-red-400';
+                        }
+                    }
+                })
+                .catch(err => console.error("Error fetching air quality:", err));
+
+            // ดึงข้อมูลสภาพอากาศหลัก
+            fetch(weatherUrl)
                 .then(res => res.json())
                 .then(data => {
                     const current = data.current;
