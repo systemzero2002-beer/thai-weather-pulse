@@ -428,7 +428,7 @@
             </div>
         </div>
 
-        <!-- ================= PAGE 4: หน้าเบอร์สายด่วนฉุกเฉิน (ย้ายมาเปิดเป็นหน้าใหม่) ================= -->
+        <!-- ================= PAGE 4: หน้าเบอร์สายด่วนฉุกเฉิน ================= -->
         <div id="page-emergency" class="hidden space-y-4">
             <div class="bg-emerald-900/80 border border-emerald-800/80 rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-3">
                 <div class="flex items-center justify-between border-b border-emerald-800/60 pb-2.5">
@@ -558,7 +558,6 @@
             lucide.createIcons();
         }
 
-        // สลับหน้าเมนู 4 หน้าหลัก
         function switchTab(tabName) {
             const pages = ['home', 'pm25', 'flood', 'emergency'];
             pages.forEach(p => {
@@ -886,16 +885,6 @@
                     document.getElementById('humidity-val').innerText = `${current.relative_humidity_2m}%`;
                     document.getElementById('wind-val').innerText = `${Math.round(current.wind_speed_10m)} กม./ชม.`;
                     
-                    const currentUv = data.hourly && data.hourly.uv_index ? data.hourly.uv_index[0] : 5;
-                    document.getElementById('uv-index-val').innerText = currentUv.toFixed(1);
-
-                    const weatherMeta = getWeatherInfo(current.weather_code, current.is_day);
-                    document.getElementById('weather-desc').innerText = weatherMeta.desc;
-                    document.getElementById('weather-main-icon').className = `${weatherMeta.color} p-2.5 bg-white/20 rounded-2xl border border-white/30 shadow-lg backdrop-blur-md`;
-                    document.getElementById('weather-main-icon').innerHTML = `<i data-lucide="${weatherMeta.icon}" class="w-10 h-10"></i>`;
-
-                    updateWeatherBackground(current.weather_code, current.is_day);
-
                     const hourly = data.hourly || {};
                     const timeArr = hourly.time || [];
                     const defaultProb = hourly.precipitation_probability || [];
@@ -910,6 +899,19 @@
 
                     let startIndex = timeArr.findIndex(timeStr => timeStr.startsWith(currentHourStr.slice(0, 13)));
                     if (startIndex === -1) startIndex = 0;
+
+                    // ดึงค่า UV Index ให้ตรงกับชั่วโมงปัจจุบัน (startIndex) จริงๆ
+                    const currentUv = hourly.uv_index && hourly.uv_index[startIndex] !== undefined 
+                        ? hourly.uv_index[startIndex] 
+                        : 0.0;
+                    document.getElementById('uv-index-val').innerText = currentUv.toFixed(1);
+
+                    const weatherMeta = getWeatherInfo(current.weather_code, current.is_day);
+                    document.getElementById('weather-desc').innerText = weatherMeta.desc;
+                    document.getElementById('weather-main-icon').className = `${weatherMeta.color} p-2.5 bg-white/20 rounded-2xl border border-white/30 shadow-lg backdrop-blur-md`;
+                    document.getElementById('weather-main-icon').innerHTML = `<i data-lucide="${weatherMeta.icon}" class="w-10 h-10"></i>`;
+
+                    updateWeatherBackground(current.weather_code, current.is_day);
 
                     let rainInHours = -1;
                     for (let i = startIndex; i < startIndex + 20 && i < timeArr.length; i++) {
