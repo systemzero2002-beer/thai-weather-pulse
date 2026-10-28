@@ -59,7 +59,7 @@
                 </button>
             </div>
 
-            <!-- เพิ่มแถบเมนู 3 หน้า (Navigation Bar) ตรงตำแหน่งที่วงกลมไว้ -->
+            <!-- แถบเมนูสลับหน้า 3 เมนูหลัก -->
             <nav class="grid grid-cols-3 gap-1.5 bg-emerald-950/80 p-1 rounded-xl border border-emerald-800/60 text-xs font-semibold text-center">
                 <button id="nav-home" onclick="switchTab('home')" class="py-1.5 px-2 rounded-lg transition-all flex items-center justify-center gap-1 bg-emerald-600 text-white shadow-md">
                     <i data-lucide="home" class="w-3.5 h-3.5"></i>
@@ -231,7 +231,6 @@
                     </button>
                 </div>
 
-                <!-- รายชื่อ 10 อันดับ -->
                 <div id="pm25-top-list" class="space-y-2">
                     <div class="text-center py-6 text-xs text-emerald-300/80 animate-pulse">
                         กำลังตรวจสอบข้อมูลคุณภาพอากาศทั่วประเทศ...
@@ -256,13 +255,11 @@
                     <span class="text-[10px] bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded-full border border-sky-500/30">อัปเดตเรียลไทม์</span>
                 </div>
 
-                <!-- แผนที่สถานการณ์น้ำ -->
                 <div id="flood-map" class="shadow-inner border border-emerald-800/80"></div>
 
-                <!-- รายชื่อพื้นที่เฝ้าระวัง -->
                 <div class="space-y-2 pt-1">
                     <h3 class="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
-                        <i data-lucide="shield-alert" class="w-4 h-4 text-amber-400"></i> รายงานพื้นที่เฝ้าระวังอุทกภัยปัจุบัน
+                        <i data-lucide="shield-alert" class="w-4 h-4 text-amber-400"></i> รายงานพื้นที่เฝ้าระวังอุทกภัยปัจจุบัน
                     </h3>
                     <div id="flood-status-list" class="space-y-2 text-xs">
                         <div class="bg-emerald-950/60 p-3 rounded-xl border border-emerald-800/40 flex justify-between items-center">
@@ -291,6 +288,13 @@
             </div>
         </div>
 
+        <!-- Footer เครดิตแหล่งข้อมูล -->
+        <footer class="mt-6 pt-4 border-t border-emerald-800/50 text-center text-[10px] text-emerald-300/60 space-y-1">
+            <p>ข้อมูลสภาพอากาศ & PM2.5 โดย <a href="https://open-meteo.com/" target="_blank" class="underline hover:text-emerald-300">Open-Meteo</a></p>
+            <p>เรดาร์ฝน & แผนที่ โดย <a href="https://www.rainviewer.com/" target="_blank" class="underline hover:text-emerald-300">RainViewer</a> & <a href="https://www.openstreetmap.org/" target="_blank" class="underline hover:text-emerald-300">OpenStreetMap</a></p>
+            <p>© ThaiWeatherPulse - พัฒนาเพื่อการเฝ้าระวังอากาศและภัยพิบัติ</p>
+        </footer>
+
     </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -301,7 +305,7 @@
 
         lucide.createIcons();
 
-        // สลับสวิตช์หน้าระหว่าง 3 เมนู
+        // ฟังก์ชันสลับ 3 หน้าเมนูหลัก
         function switchTab(tabName) {
             const pages = ['home', 'pm25', 'flood'];
             pages.forEach(p => {
@@ -509,7 +513,6 @@
                     attribution: 'Tiles &copy; Esri'
                 }).addTo(floodMap);
 
-                // โหลดเรดาร์ฝนทับลงบนแผนที่สถานการณ์น้ำ
                 fetch('https://api.rainviewer.com/public/weather-maps.json')
                     .then(res => res.json())
                     .then(data => {
@@ -720,7 +723,6 @@
                 .catch(err => console.error("Error fetching weather:", err));
         }
 
-        // ดึง 10 อันดับพื้นที่ค่าฝุ่น PM2.5 สูงสุดในประเทศ
         function loadTopPM25Data() {
             const topListEl = document.getElementById('pm25-top-list');
             topListEl.innerHTML = '<div class="text-center py-6 text-xs text-emerald-300/80 animate-pulse">กำลังประมวลผลข้อมูลฝุ่นทั่วไทย...</div>';
