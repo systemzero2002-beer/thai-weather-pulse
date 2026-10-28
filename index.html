@@ -10,6 +10,14 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- สคริปต์เชื่อมต่อ PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#064e3b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
     <style>
         .hourly-scroll {
             display: flex;
@@ -37,12 +45,6 @@
             100% { transform: scale(1.2, 1.2); opacity: 0.0; }
         }
     </style>
-    <!-- สคริปต์เชื่อมต่อ PWA -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#064e3b">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body id="body-theme" class="bg-emerald-950 text-slate-100 font-sans min-h-screen pb-8 selection:bg-emerald-500 selection:text-white transition-colors duration-300">
 
@@ -352,7 +354,6 @@
                         <i data-lucide="shield-alert" class="w-4 h-4 text-amber-500"></i> รายงานพื้นที่เฝ้าระวังอุทกภัยปัจจุบัน (ครบทุกภาค)
                     </h3>
                     <div id="flood-status-list" class="space-y-2 text-xs">
-                        <!-- ภาคเหนือ -->
                         <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
                             <div>
                                 <span class="font-bold text-amber-500">ภาคเหนือ - ลุ่มน้ำยม-น่าน</span>
@@ -360,7 +361,6 @@
                             </div>
                             <span class="bg-amber-500/20 text-amber-500 text-[10px] px-2 py-0.5 rounded-full border border-amber-500/30 font-bold">เฝ้าระวัง</span>
                         </div>
-                        <!-- ภาคกลาง -->
                         <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
                             <div>
                                 <span class="font-bold">ภาคกลาง - ลุ่มน้ำเจ้าพระยา</span>
@@ -368,7 +368,6 @@
                             </div>
                             <span class="bg-emerald-500/20 text-emerald-500 text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold">ปกติ</span>
                         </div>
-                        <!-- ภาคตะวันออกเฉียงเหนือ (อีสาน) -->
                         <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
                             <div>
                                 <span class="font-bold text-sky-500">ภาคตะวันออกเฉียงเหนือ - ลุ่มน้ำชี-มูล</span>
@@ -376,7 +375,6 @@
                             </div>
                             <span class="bg-sky-500/20 text-sky-500 text-[10px] px-2 py-0.5 rounded-full border border-sky-500/30 font-bold">ปกติ</span>
                         </div>
-                        <!-- ภาคตะวันออก -->
                         <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
                             <div>
                                 <span class="font-bold text-emerald-500">ภาคตะวันออก - ลุ่มน้ำบางปะกง-ระยอง</span>
@@ -384,7 +382,6 @@
                             </div>
                             <span class="bg-emerald-500/20 text-emerald-500 text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold">ปกติ</span>
                         </div>
-                        <!-- ภาคตะวันตก -->
                         <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
                             <div>
                                 <span class="font-bold text-emerald-500">ภาคตะวันตก - ลุ่มน้ำแม่กลอง-เพชรบุรี</span>
@@ -392,7 +389,6 @@
                             </div>
                             <span class="bg-emerald-500/20 text-emerald-500 text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold">ปกติ</span>
                         </div>
-                        <!-- ภาคใต้ -->
                         <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
                             <div>
                                 <span class="font-bold text-sky-500">ภาคใต้ - ฝั่งอ่าวไทย & อันดามัน</span>
@@ -917,10 +913,10 @@
                 map = L.map('map', { zoomControl: false, maxZoom: 19 }).setView([lat, lon], 11);
                 
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-    maxZoom: 19,
-    maxNativeZoom: 19,
-    attribution: 'Tiles &copy; Esri'
-}).addTo(map);
+                    maxZoom: 19,
+                    maxNativeZoom: 19,
+                    attribution: 'Tiles &copy; Esri'
+                }).addTo(map);
 
                 const customIcon = L.divIcon({
                     className: 'custom-div-icon',
@@ -944,6 +940,7 @@
                 floodMap = L.map('flood-map', { zoomControl: false, maxZoom: 19 }).setView([13.7563, 100.5018], 6);
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
                     maxZoom: 19,
+                    maxNativeZoom: 19,
                     attribution: 'Tiles &copy; Esri'
                 }).addTo(floodMap);
 
@@ -953,7 +950,7 @@
                         if (data && data.radar && data.radar.past && data.radar.past.length > 0) {
                             const latestRadar = data.radar.past[data.radar.past.length - 1];
                             L.tileLayer(`https://tilecache.rainviewer.com${latestRadar.path}/256/{z}/{x}/{y}/2/1_1.png`, {
-                                opacity: 0.65, tileSize: 256, zIndex: 100
+                                maxZoom: 19, maxNativeZoom: 19, opacity: 0.65, tileSize: 256, zIndex: 100
                             }).addTo(floodMap);
                         }
                     });
@@ -973,7 +970,7 @@
                         if (radarLayer) map.removeLayer(radarLayer);
                         
                         radarLayer = L.tileLayer(`https://tilecache.rainviewer.com${radarPath}/256/{z}/{x}/{y}/2/1_1.png`, {
-                            opacity: 0.65, tileSize: 256, zIndex: 100
+                            maxZoom: 19, maxNativeZoom: 19, opacity: 0.65, tileSize: 256, zIndex: 100
                         }).addTo(map);
                     }
                 })
@@ -1333,9 +1330,8 @@
             useCurrentGPS();
             setTheme('emerald');
         });
-    </script>
-    <!-- ลงทะเบียน Service Worker สำหรับ PWA -->
-    <script>
+
+        // ลงทะเบียน Service Worker สำหรับ PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
