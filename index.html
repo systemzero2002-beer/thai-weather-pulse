@@ -1224,7 +1224,8 @@
                     let rainInHours = -1;
                     for (let i = startIndex; i < startIndex + 20 && i < timeArr.length; i++) {
                         const prob = defaultProb[i] !== undefined ? defaultProb[i] : 0;
-                        if (prob >= 30) {
+                        // 🛠️ ปรับเกณฑ์ความน่าจะเป็นจาก 30% เป็น 50% ขึ้นไป
+                        if (prob >= 50) {
                             rainInHours = i - startIndex;
                             break;
                         }
@@ -1294,7 +1295,7 @@
                             const dDate = new Date(daily.time[d]);
                             const dayName = d === 0 ? 'วันนี้' : thaiDays[dDate.getDay()] + ' ' + dDate.getDate();
                             const maxT = Math.round(daily.temperature_2m_max[d]);
-                            const minT = Math.round(daily.temperature_2m_min[d]);
+                            const minT = Math.round(daily.temperature_20_min ? daily.temperature_2m_min[d] : daily.temperature_2m_min[d]);
                             const dCode = daily.weather_code[d];
                             const dRainProb = daily.precipitation_probability_max ? daily.precipitation_probability_max[d] : 0;
                             const dInfo = getWeatherInfo(dCode, 1);
@@ -1450,7 +1451,7 @@
         function populateFallbackProvinces() {
             const provSelect = document.getElementById('province-select');
             if (!provSelect) return;
-            provSelect.innerHTML = '<option value="">-- เลือกจังหวัด --</option>';
+            provSelect.innerHtml = '<option value="">-- เลือกจังหวัด --</option>';
             const defaultProvinces = ['นนทบุรี', 'กรุงเทพมหานคร', 'ปทุมธานี', 'สมุทรปราการ', 'ชลบุรี', 'เชียงใหม่', 'ขอนแก่น', 'ภูเก็ต', 'พิษณุโลก'];
             defaultProvinces.forEach(name => {
                 const opt = document.createElement('option');
