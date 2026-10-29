@@ -44,6 +44,72 @@
             50% { opacity: 1.0; }
             100% { transform: scale(1.2, 1.2); opacity: 0.0; }
         }
+
+        /* 🎨 CSS Dynamic Weather Animations */
+        .weather-effect-container {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* 1. แดดออก (Sunny Glow) */
+        .effect-sun {
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.4) 0%, rgba(245, 158, 11, 0.15) 50%, rgba(0,0,0,0) 80%);
+            border-radius: 50%;
+            animation: sunPulse 4s ease-in-out infinite alternate;
+        }
+        @keyframes sunPulse {
+            0% { transform: scale(0.85); opacity: 0.6; }
+            100% { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* 2. ฝนตก (Rain Drops) */
+        .effect-rain-drop {
+            position: absolute;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(186, 230, 253, 0.75));
+            width: 1.5px;
+            height: 22px;
+            opacity: 0.7;
+            animation: rainFall 0.8s linear infinite;
+        }
+        @keyframes rainFall {
+            0% { transform: translateY(-20px); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(220px); opacity: 0; }
+        }
+
+        /* 3. เมฆมาก (Clouds Floating) */
+        .effect-cloud-puff {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 50px;
+            filter: blur(8px);
+            animation: cloudFloat 18s linear infinite;
+        }
+        @keyframes cloudFloat {
+            0% { transform: translateX(-120px); }
+            100% { transform: translateX(450px); }
+        }
+
+        /* 4. พายุ/ฟ้าแลบ (Thunder Lightning) */
+        .effect-lightning {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.25);
+            opacity: 0;
+            animation: lightningFlash 5s ease-in-out infinite;
+        }
+        @keyframes lightningFlash {
+            0%, 92%, 96%, 100% { opacity: 0; }
+            93%, 95% { opacity: 1; }
+        }
     </style>
 </head>
 <body id="body-theme" class="bg-emerald-950 text-slate-100 font-sans min-h-screen pb-8 selection:bg-emerald-500 selection:text-white transition-colors duration-300">
@@ -198,9 +264,11 @@
                 </div>
             </div>
 
-            <!-- Weather Display Card -->
+            <!-- Weather Display Card (พร้อมแอนิเมชันกราฟิกสภาพอากาศ) -->
             <div id="weather-card-bg" class="rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-white/10 bg-gradient-to-br from-emerald-800 to-teal-950 relative overflow-hidden">
-                <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                
+                <!-- 🌟 เลเยอร์กราฟิกแอนิเมชันสภาพอากาศ -->
+                <div id="weather-effect-layer" class="weather-effect-container"></div>
                 
                 <div class="flex items-start justify-between mb-3 relative z-10">
                     <div>
@@ -1126,20 +1194,66 @@
             return weatherMap[code] || { desc: 'สภาพอากาศทั่วไป', icon: 'cloud', color: 'opacity-70' };
         }
 
+        /* 🎨 ฟังก์ชันจัดการแอนิเมชันกราฟิกสภาพอากาศ */
         function updateWeatherBackground(code, isDay) {
             const cardBg = document.getElementById('weather-card-bg');
-            if (!cardBg) return;
+            const effectLayer = document.getElementById('weather-effect-layer');
+            if (!cardBg || !effectLayer) return;
+
+            effectLayer.innerHTML = ''; // ล้างเอฟเฟกต์เก่าออกก่อน
             
             if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) {
+                // 🌧️ ฝนตก
                 cardBg.className = "rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-sky-400/35 bg-gradient-to-br from-slate-800 via-sky-950 to-blue-950 text-white relative overflow-hidden";
+                
+                // สร้างสายฝน 18 เส้นตกสลับกัน
+                for (let i = 0; i < 18; i++) {
+                    const drop = document.createElement('div');
+                    drop.className = 'effect-rain-drop';
+                    drop.style.left = `${Math.random() * 100}%`;
+                    drop.style.animationDuration = `${0.5 + Math.random() * 0.5}s`;
+                    drop.style.animationDelay = `${Math.random() * 1}s`;
+                    effectLayer.appendChild(drop);
+                }
             } else if ([95].includes(code)) {
+                // ⚡ พายุฝนฟ้าคะนอง
                 cardBg.className = "rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-purple-400/35 bg-gradient-to-br from-purple-950 via-slate-900 to-indigo-950 text-white relative overflow-hidden";
+                
+                const flash = document.createElement('div');
+                flash.className = 'effect-lightning';
+                effectLayer.appendChild(flash);
+
+                for (let i = 0; i < 12; i++) {
+                    const drop = document.createElement('div');
+                    drop.className = 'effect-rain-drop';
+                    drop.style.left = `${Math.random() * 100}%`;
+                    drop.style.animationDuration = `${0.4 + Math.random() * 0.4}s`;
+                    effectLayer.appendChild(drop);
+                }
             } else if ([3, 45, 48].includes(code)) {
+                // ☁️ เมฆมาก / หมอก
                 cardBg.className = "rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-slate-400/35 bg-gradient-to-br from-slate-800 via-teal-950 to-slate-950 text-white relative overflow-hidden";
+                
+                for (let i = 0; i < 3; i++) {
+                    const cloud = document.createElement('div');
+                    cloud.className = 'effect-cloud-puff';
+                    cloud.style.width = `${100 + i * 40}px`;
+                    cloud.style.height = `${40 + i * 15}px`;
+                    cloud.style.top = `${10 + i * 35}%`;
+                    cloud.style.animationDuration = `${14 + i * 6}s`;
+                    cloud.style.animationDelay = `${i * 3}s`;
+                    effectLayer.appendChild(cloud);
+                }
             } else if (code === 0 || code === 1) {
                 if (isDay) {
+                    // ☀️ แดดออก
                     cardBg.className = "rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-amber-400/35 bg-gradient-to-br from-sky-600 via-teal-800 to-emerald-950 text-white relative overflow-hidden";
+                    
+                    const sunGlow = document.createElement('div');
+                    sunGlow.className = 'effect-sun';
+                    effectLayer.appendChild(sunGlow);
                 } else {
+                    // 🌙 คืนฟ้าโปร่ง
                     cardBg.className = "rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-blue-400/35 bg-gradient-to-br from-indigo-950 via-slate-900 to-blue-950 text-white relative overflow-hidden";
                 }
             } else {
@@ -1219,12 +1333,12 @@
                     document.getElementById('weather-main-icon').className = `${weatherMeta.color} p-2.5 bg-white/20 rounded-2xl border border-white/30 shadow-lg backdrop-blur-md`;
                     document.getElementById('weather-main-icon').innerHTML = `<i data-lucide="${weatherMeta.icon}" class="w-10 h-10"></i>`;
 
+                    // เรียกใช้แอนิเมชันพื้นหลังตามสภาพอากาศ
                     updateWeatherBackground(current.weather_code, current.is_day);
 
                     let rainInHours = -1;
                     for (let i = startIndex; i < startIndex + 20 && i < timeArr.length; i++) {
                         const prob = defaultProb[i] !== undefined ? defaultProb[i] : 0;
-                        // 🛠️ ปรับเกณฑ์ความน่าจะเป็นจาก 30% เป็น 50% ขึ้นไป
                         if (prob >= 50) {
                             rainInHours = i - startIndex;
                             break;
@@ -1295,7 +1409,7 @@
                             const dDate = new Date(daily.time[d]);
                             const dayName = d === 0 ? 'วันนี้' : thaiDays[dDate.getDay()] + ' ' + dDate.getDate();
                             const maxT = Math.round(daily.temperature_2m_max[d]);
-                            const minT = Math.round(daily.temperature_20_min ? daily.temperature_2m_min[d] : daily.temperature_2m_min[d]);
+                            const minT = Math.round(daily.temperature_2m_min[d]);
                             const dCode = daily.weather_code[d];
                             const dRainProb = daily.precipitation_probability_max ? daily.precipitation_probability_max[d] : 0;
                             const dInfo = getWeatherInfo(dCode, 1);
@@ -1451,7 +1565,7 @@
         function populateFallbackProvinces() {
             const provSelect = document.getElementById('province-select');
             if (!provSelect) return;
-            provSelect.innerHtml = '<option value="">-- เลือกจังหวัด --</option>';
+            provSelect.innerHTML = '<option value="">-- เลือกจังหวัด --</option>';
             const defaultProvinces = ['นนทบุรี', 'กรุงเทพมหานคร', 'ปทุมธานี', 'สมุทรปราการ', 'ชลบุรี', 'เชียงใหม่', 'ขอนแก่น', 'ภูเก็ต', 'พิษณุโลก'];
             defaultProvinces.forEach(name => {
                 const opt = document.createElement('option');
