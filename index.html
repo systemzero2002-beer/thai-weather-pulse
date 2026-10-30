@@ -30,7 +30,7 @@
         .hourly-scroll::-webkit-scrollbar { height: 5px; }
         .hourly-scroll::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 10px; }
         .hourly-scroll::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.2); border-radius: 10px; }
-        #map, #flood-map { height: 260px; width: 100%; border-radius: 1rem; z-index: 1; }
+        #map { height: 260px; width: 100%; border-radius: 1rem; z-index: 1; }
         .pulse-marker {
             background: rgba(16, 185, 129, 0.4);
             border-radius: 50%;
@@ -53,8 +53,6 @@
             pointer-events: none;
             z-index: 1;
         }
-
-        /* 1. แดดออก (Sunny Glow) */
         .effect-sun {
             position: absolute;
             top: -40px;
@@ -69,8 +67,6 @@
             0% { transform: scale(0.85); opacity: 0.6; }
             100% { transform: scale(1.2); opacity: 1; }
         }
-
-        /* 2. ฝนตก (Rain Drops) */
         .effect-rain-drop {
             position: absolute;
             background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(186, 230, 253, 0.75));
@@ -84,8 +80,6 @@
             50% { opacity: 0.8; }
             100% { transform: translateY(220px); opacity: 0; }
         }
-
-        /* 3. เมฆมาก / มีเมฆบางส่วน (Clouds Floating) */
         .effect-cloud-puff {
             position: absolute;
             background: rgba(255, 255, 255, 0.12);
@@ -97,8 +91,6 @@
             0% { transform: translateX(-120px); }
             100% { transform: translateX(450px); }
         }
-
-        /* 4. พายุ/ฟ้าแลบ (Thunder Lightning) */
         .effect-lightning {
             position: absolute;
             inset: 0;
@@ -129,13 +121,11 @@
                 </div>
 
                 <div class="flex items-center gap-1.5 relative">
-                    <!-- ปุ่มเลือก Theme สลับได้หลายสี -->
                     <button onclick="toggleThemeDropdown()" id="palette-btn" class="bg-black/20 hover:bg-black/40 p-2 rounded-xl text-white text-xs transition-all border border-white/20 flex items-center gap-1 shadow-md active:scale-95" title="เลือกธีมสี">
                         <i data-lucide="palette" class="w-4 h-4"></i>
                         <i data-lucide="chevron-down" class="w-3 h-3 opacity-70"></i>
                     </button>
 
-                    <!-- Dropdown เมนูเลือกสี -->
                     <div id="theme-dropdown" class="hidden absolute right-0 top-11 w-44 bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl p-2 shadow-2xl z-50 grid grid-cols-2 gap-1.5 text-xs">
                         <button onclick="setTheme('emerald')" class="flex items-center gap-1.5 p-1.5 rounded-xl hover:bg-white/10 text-white font-medium text-left">
                             <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 border border-white/40"></span> เขียว
@@ -163,7 +153,6 @@
                         </button>
                     </div>
 
-                    <!-- ปุ่ม GPS -->
                     <button onclick="useCurrentGPS()" id="gps-btn-theme" class="bg-black/20 hover:bg-black/30 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all border border-white/20 active:scale-95" title="ใช้พิกัด GPS ปัจจุบัน">
                         <i data-lucide="locate-fixed" class="w-4 h-4"></i>
                         <span>GPS จริง</span>
@@ -264,10 +253,8 @@
                 </div>
             </div>
 
-            <!-- Weather Display Card (พร้อมแอนิเมชันกราฟิกสภาพอากาศ) -->
+            <!-- Weather Display Card -->
             <div id="weather-card-bg" class="rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-white/10 bg-gradient-to-br from-emerald-800 to-teal-950 relative overflow-hidden">
-                
-                <!-- 🌟 เลเยอร์กราฟิกแอนิเมชันสภาพอากาศ -->
                 <div id="weather-effect-layer" class="weather-effect-container"></div>
                 
                 <div class="flex items-start justify-between mb-3 relative z-10">
@@ -423,63 +410,16 @@
                             <i data-lucide="waves" class="w-5 h-5"></i>
                         </div>
                         <div>
-                            <h2 class="text-sm font-bold">สถานการณ์เฝ้าระวังน้ำท่วม</h2>
-                            <p class="text-[10px] opacity-70">รายงานพื้นที่เสี่ยงและเฝ้าระวังอุทกภัย</p>
+                            <h2 class="text-sm font-bold">สถานการณ์เฝ้าระวังน้ำท่วมรายภาค</h2>
+                            <p class="text-[10px] opacity-70">คลิกที่ภาคเพื่อดูสถานการณ์รายจังหวัด</p>
                         </div>
                     </div>
                     <span class="text-[10px] bg-sky-500/20 text-sky-500 px-2 py-0.5 rounded-full border border-sky-500/30 font-bold">อัปเดตเรียลไทม์</span>
                 </div>
 
-                <div id="flood-map" class="shadow-inner border border-white/10"></div>
-
-                <div class="space-y-2 pt-1">
-                    <h3 id="label-flood-title" class="text-xs font-bold flex items-center gap-1.5">
-                        <i data-lucide="shield-alert" class="w-4 h-4 text-amber-500"></i> รายงานพื้นที่เฝ้าระวังอุทกภัยปัจจุบัน (ครบทุกภาค)
-                    </h3>
-                    <div id="flood-status-list" class="space-y-2 text-xs">
-                        <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
-                            <div>
-                                <span class="font-bold text-amber-500">ภาคเหนือ - ลุ่มน้ำยม-น่าน</span>
-                                <p class="text-[10px] opacity-80">เฝ้าระวังระดับน้ำเอ่อล้นตลิ่งบริเวณพื้นที่ลุ่มต่ำ</p>
-                            </div>
-                            <span class="bg-amber-500/20 text-amber-500 text-[10px] px-2 py-0.5 rounded-full border border-amber-500/30 font-bold">เฝ้าระวัง</span>
-                        </div>
-                        <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
-                            <div>
-                                <span class="font-bold">ภาคกลาง - ลุ่มน้ำเจ้าพระยา</span>
-                                <p class="text-[10px] opacity-80">การระบายน้ำอยู่ในเกณฑ์ปกติ การจราจรทางน้ำคล่องตัว</p>
-                            </div>
-                            <span class="bg-emerald-500/20 text-emerald-500 text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold">ปกติ</span>
-                        </div>
-                        <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
-                            <div>
-                                <span class="font-bold text-sky-500">ภาคตะวันออกเฉียงเหนือ - ลุ่มน้ำชี-มูล</span>
-                                <p class="text-[10px] opacity-80">ปริมาณน้ำในลำน้ำสาขาอยู่ในเกณฑ์ควบคุมได้</p>
-                            </div>
-                            <span class="bg-sky-500/20 text-sky-500 text-[10px] px-2 py-0.5 rounded-full border border-sky-500/30 font-bold">ปกติ</span>
-                        </div>
-                        <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
-                            <div>
-                                <span class="font-bold text-emerald-500">ภาคตะวันออก - ลุ่มน้ำบางปะกง-ระยอง</span>
-                                <p class="text-[10px] opacity-80">สถานการณ์น้ำทั่วไปปกติ มีฝนตกเล็กน้อยบางพื้นที่</p>
-                            </div>
-                            <span class="bg-emerald-500/20 text-emerald-500 text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold">ปกติ</span>
-                        </div>
-                        <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
-                            <div>
-                                <span class="font-bold text-emerald-500">ภาคตะวันตก - ลุ่มน้ำแม่กลอง-เพชรบุรี</span>
-                                <p class="text-[10px] opacity-80">การบริหารจัดการน้ำในอ่างเก็บน้ำอยู่ในเกณฑ์ปลอดภัย</p>
-                            </div>
-                            <span class="bg-emerald-500/20 text-emerald-500 text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold">ปกติ</span>
-                        </div>
-                        <div class="bg-black/20 p-3 rounded-xl border border-white/10 flex justify-between items-center">
-                            <div>
-                                <span class="font-bold text-sky-500">ภาคใต้ - ฝั่งอ่าวไทย & อันดามัน</span>
-                                <p class="text-[10px] opacity-80">เฝ้าระวังฝนตกสะสมในพื้นที่เชิงเขาและพื้นที่เสี่ยงภัย</p>
-                            </div>
-                            <span class="bg-sky-500/20 text-sky-500 text-[10px] px-2 py-0.5 rounded-full border border-sky-500/30 font-bold">ติดตามใกล้ชิด</span>
-                        </div>
-                    </div>
+                <!-- 🌊 รายการแต่ละภาคแบบกดขยายดูรายจังหวัด -->
+                <div id="regions-flood-container" class="space-y-2.5 text-xs">
+                    <!-- ข้อมูลภาคจะถูกสร้างด้วย JavaScript ด้านล่าง -->
                 </div>
             </div>
 
@@ -662,7 +602,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        let map, userMarker, radarLayer, floodMap;
+        let map, userMarker, radarLayer;
         let thaiDataCache = null;
         let currentLat = 13.9315, currentLon = 100.4735, currentLocName = "คลองข่อย นนทบุรี";
 
@@ -776,28 +716,20 @@
 
         function setTheme(themeKey) {
             currentThemeKey = themeKey;
-            
-            try {
-                localStorage.setItem('savedWeatherTheme', themeKey);
-            } catch (e) {
-                console.error("LocalStorage error:", e);
-            }
+            try { localStorage.setItem('savedWeatherTheme', themeKey); } catch (e) {}
 
             const config = themeConfigs[themeKey] || themeConfigs.emerald;
-            
             document.getElementById('body-theme').className = `${config.body} font-sans min-h-screen pb-8 selection:bg-emerald-500 selection:text-white transition-colors duration-300`;
             document.getElementById('header-theme').className = `sticky top-0 z-50 ${config.header} backdrop-blur-md px-4 py-3 shadow-lg transition-colors duration-300`;
             document.getElementById('brand-title').className = `text-lg font-bold leading-none ${config.title} transition-colors`;
             document.getElementById('brand-subtitle').className = `text-[10px] ${config.subtitle} transition-colors`;
             document.getElementById('brand-icon-bg').className = `${config.iconBg} p-2 rounded-xl shadow-md transition-colors`;
 
-            const cardBoxes = document.querySelectorAll('.card-box');
-            cardBoxes.forEach(box => {
+            document.querySelectorAll('.card-box').forEach(box => {
                 box.className = `card-box ${config.cardBg} rounded-2xl p-4 shadow-xl backdrop-blur-sm space-y-3 transition-colors duration-300`;
             });
 
-            const labels = ['label-search-title', 'label-hourly-title', 'label-daily-title', 'label-radar-title', 'label-pm25-title', 'label-flood-title'];
-            labels.forEach(id => {
+            ['label-search-title', 'label-hourly-title', 'label-daily-title', 'label-radar-title', 'label-pm25-title'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.className = `text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 ${config.labelTitle}`;
             });
@@ -838,46 +770,208 @@
             if (tabName === 'pm25') {
                 loadTopPM25Data();
             } else if (tabName === 'flood') {
-                setTimeout(() => initFloodMap(), 100);
+                renderFloodRegions();
+            }
+        }
+
+        /* ================= 🌊 ข้อมูลสถานการณ์น้ำรายภาค & รายจังหวัด ================= */
+        const floodRegionsData = [
+            {
+                region: "ภาคเหนือ - ลุ่มน้ำยม-น่าน",
+                status: "เฝ้าระวัง",
+                statusClass: "bg-amber-500/20 text-amber-500 border-amber-500/30",
+                desc: "เฝ้าระวังระดับน้ำเอ่อล้นตลิ่งบริเวณพื้นที่ลุ่มต่ำ",
+                provinces: [
+                    { name: "เชียงใหม่", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "เชียงราย", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "พะเยา", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "น่าน", status: "เฝ้าระวัง", class: "text-amber-400" },
+                    { name: "แพร่", status: "เฝ้าระวัง", class: "text-amber-400" },
+                    { name: "อุตรดิตถ์", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "พิษณุโลก", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "สุโขทัย", status: "เฝ้าระวัง", class: "text-amber-400" },
+                    { name: "ตาก", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "กำแพงเพชร", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "พิจิตร", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "เพชรบูรณ์", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ลำปาง", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ลำพูน", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "แม่ฮ่องสอน", status: "ปกติ", class: "text-emerald-400" }
+                ]
+            },
+            {
+                region: "ภาคกลาง - ลุ่มน้ำเจ้าพระยา",
+                status: "ปกติ",
+                statusClass: "bg-emerald-500/20 text-emerald-500 border-emerald-500/30",
+                desc: "การระบายน้ำอยู่ในเกณฑ์ปกติ การจราจรทางน้ำคล่องตัว",
+                provinces: [
+                    { name: "กรุงเทพมหานคร", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "นนทบุรี", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ปทุมธานี", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "พระนครศรีอยุธยา", status: "เฝ้าระวัง", class: "text-amber-400" },
+                    { name: "อ่างทอง", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "สิงห์บุรี", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ชัยนาท", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ลพบุรี", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "สระบุรี", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "นครปฐม", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "สมุทรปราการ", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "สมุทรสาคร", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "สมุทรสงคราม", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "นครสวรรค์", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "อุทัยธานี", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "สุพรรณบุรี", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "อ่างทอง", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "นครนายก", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ปราจีนบุรี", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "สระแก้ว", status: "ปกติ", class: "text-emerald-400" }
+                ]
+            },
+            {
+                region: "ภาคตะวันออกเฉียงเหนือ - ลุ่มน้ำชี-มูล",
+                status: "ปกติ",
+                statusClass: "bg-sky-500/20 text-sky-500 border-sky-500/30",
+                desc: "ปริมาณน้ำในลำน้ำสาขาอยู่ในเกณฑ์ควบคุมได้",
+                provinces: [
+                    { name: "ขอนแก่น", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "นครราชสีมา", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "อุบลราชธานี", status: "เฝ้าระวัง", class: "text-amber-400" },
+                    { name: "อุดรธานี", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "บุรีรัมย์", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "สุรินทร์", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ศรีสะเกษ", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ร้อยเอ็ด", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "มหาสารคาม", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ชัยภูมิ", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ยโสธร", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "หนองคาย", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "เลย", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "สกลนคร", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "นครพนม", status: "ปกติ", class: "text-emerald-400" }
+                ]
+            },
+            {
+                region: "ภาคตะวันออก - ลุ่มน้ำบางปะกง-ระยอง",
+                status: "ปกติ",
+                statusClass: "bg-emerald-500/20 text-emerald-500 border-emerald-500/30",
+                desc: "สถานการณ์น้ำทั่วไปปกติ มีฝนตกเล็กน้อยบางพื้นที่",
+                provinces: [
+                    { name: "ชลบุรี", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ระยอง", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "จันทบุรี", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ตราด", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ฉะเชิงเทรา", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "จันทบุรี", status: "ปกติ", class: "text-emerald-400" }
+                ]
+            },
+            {
+                region: "ภาคตะวันตก - ลุ่มน้ำแม่กลอง-เพชรบุรี",
+                status: "ปกติ",
+                statusClass: "bg-emerald-500/20 text-emerald-500 border-emerald-500/30",
+                desc: "การบริหารจัดการน้ำในอ่างเก็บน้ำอยู่ในเกณฑ์ปลอดภัย",
+                provinces: [
+                    { name: "กาญจนบุรี", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ราชบุรี", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "เพชรบุรี", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ประจวบคีรีขันธ์", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ตาก (ฝั่งตะวันตก)", status: "ปกติ", class: "text-emerald-400" }
+                ]
+            },
+            {
+                region: "ภาคใต้ - ฝั่งอ่าวไทย & อันดามัน",
+                status: "ติดตามใกล้ชิด",
+                statusClass: "bg-sky-500/20 text-sky-500 border-sky-500/30",
+                desc: "เฝ้าระวังฝนตกสะสมในพื้นที่เชิงเขาและพื้นที่เสี่ยงภัย",
+                provinces: [
+                    { name: "สงขลา", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "สุราษฎร์ธานี", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "นครศรีธรรมราช", status: "เฝ้าระวัง", class: "text-amber-400" },
+                    { name: "ภูเก็ต", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "พังงา", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "กระบี่", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ตรัง", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "สตูล", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ปัตตานี", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ยะลา", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "นราธิวาส", status: "เฝ้าระวัง", class: "text-amber-400" },
+                    { name: "ชุมพร", status: "ปกติ", class: "text-emerald-400" },
+                    { name: "ระนอง", status: "ปกติ", class: "text-emerald-400" }
+                ]
+            }
+        ];
+
+        function renderFloodRegions() {
+            const container = document.getElementById('regions-flood-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            floodRegionsData.forEach((reg, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'bg-black/20 rounded-xl border border-white/10 overflow-hidden';
+                
+                // หัวข้อภาค (กดเพื่อย่อ/ขยาย)
+                let provincesHtml = reg.provinces.map(p => `
+                    <div class="flex justify-between items-center py-1.5 px-2 bg-black/20 rounded-lg border border-white/5">
+                        <span class="font-medium">จังหวัด${p.name}</span>
+                        <span class="${p.class} font-bold">${p.status}</span>
+                    </div>
+                `).join('');
+
+                itemDiv.innerHTML = `
+                    <div onclick="toggleRegionAccordion(${index})" class="p-3 flex justify-between items-center cursor-pointer hover:bg-white/5 transition-colors">
+                        <div>
+                            <span class="font-bold text-sm block">${reg.region}</span>
+                            <p class="text-[10px] opacity-80 mt-0.5">${reg.desc}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="${reg.statusClass} text-[10px] px-2 py-0.5 rounded-full border font-bold">${reg.status}</span>
+                            <i data-lucide="chevron-down" id="chevron-${index}" class="w-4 h-4 opacity-70 transition-transform duration-300"></i>
+                        </div>
+                    </div>
+                    <div id="region-content-${index}" class="hidden p-3 pt-0 space-y-1.5 border-t border-white/10 bg-black/10">
+                        <p class="text-[10px] opacity-70 pt-2 font-semibold">สถานการณ์น้ำรายจังหวัด:</p>
+                        <div class="grid grid-cols-1 gap-1.5 max-h-48 overflow-y-auto pr-1">
+                            ${provincesHtml}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(itemDiv);
+            });
+            lucide.createIcons();
+        }
+
+        function toggleRegionAccordion(index) {
+            const content = document.getElementById(`region-content-${index}`);
+            const chevron = document.getElementById(`chevron-${index}`);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                chevron.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                chevron.style.transform = 'rotate(0deg)';
             }
         }
 
         /* ================= 📌 ระบบ BOOKMARK (สถานที่โปรด) ================= */
         function getSavedBookmarks() {
-            try {
-                return JSON.parse(localStorage.getItem('weatherBookmarks')) || [];
-            } catch (e) {
-                return [];
-            }
+            try { return JSON.parse(localStorage.getItem('weatherBookmarks')) || []; } catch (e) { return []; }
         }
-
         function saveBookmarks(list) {
-            try {
-                localStorage.setItem('weatherBookmarks', JSON.stringify(list));
-            } catch (e) {
-                console.error("Error saving bookmarks:", e);
-            }
+            try { localStorage.setItem('weatherBookmarks', JSON.stringify(list)); } catch (e) {}
             renderBookmarks();
         }
-
         function toggleBookmarkCurrentLocation() {
             let bookmarks = getSavedBookmarks();
             const existingIndex = bookmarks.findIndex(item => Math.abs(item.lat - currentLat) < 0.01 && Math.abs(item.lon - currentLon) < 0.01);
-
             if (existingIndex >= 0) {
                 bookmarks.splice(existingIndex, 1);
             } else {
-                if (bookmarks.length >= 6) {
-                    alert("บันทึกสถานที่โปรดได้สูงสุด 6 แห่งครับ");
-                    return;
-                }
+                if (bookmarks.length >= 6) { alert("บันทึกสถานที่โปรดได้สูงสุด 6 แห่งครับ"); return; }
                 bookmarks.push({ name: currentLocName, lat: currentLat, lon: currentLon });
             }
-
             saveBookmarks(bookmarks);
             updateBookmarkButtonState();
         }
-
         function removeBookmark(index, e) {
             if (e) e.stopPropagation();
             let bookmarks = getSavedBookmarks();
@@ -885,49 +979,34 @@
             saveBookmarks(bookmarks);
             updateBookmarkButtonState();
         }
-
         function renderBookmarks() {
             const listEl = document.getElementById('bookmark-list');
             if (!listEl) return;
-
             const bookmarks = getSavedBookmarks();
             if (bookmarks.length === 0) {
                 listEl.innerHTML = '<span class="text-[10px] opacity-60">ยังไม่มีรายการที่บันทึก</span>';
                 return;
             }
-
             listEl.innerHTML = '';
             bookmarks.forEach((item, index) => {
                 const btn = document.createElement('div');
                 btn.className = 'bg-black/30 hover:bg-black/50 text-white text-[11px] px-2.5 py-1 rounded-xl border border-white/20 flex items-center gap-1.5 cursor-pointer shadow-sm transition-all active:scale-95';
                 btn.onclick = () => {
-                    currentLat = item.lat;
-                    currentLon = item.lon;
-                    currentLocName = item.name;
+                    currentLat = item.lat; currentLon = item.lon; currentLocName = item.name;
                     document.getElementById('location-text').innerText = item.name;
-                    initMap(item.lat, item.lon);
-                    fetchWeatherData(item.lat, item.lon);
+                    initMap(item.lat, item.lon); fetchWeatherData(item.lat, item.lon);
                     updateBookmarkButtonState();
                 };
-
-                btn.innerHTML = `
-                    <span class="truncate max-w-[100px]">${item.name}</span>
-                    <button onclick="removeBookmark(${index}, event)" class="opacity-60 hover:opacity-100 p-0.5 rounded-full hover:bg-white/20">
-                        <i data-lucide="x" class="w-3 h-3"></i>
-                    </button>
-                `;
+                btn.innerHTML = `<span class="truncate max-w-[100px]">${item.name}</span><button onclick="removeBookmark(${index}, event)" class="opacity-60 hover:opacity-100 p-0.5 rounded-full hover:bg-white/20"><i data-lucide="x" class="w-3 h-3"></i></button>`;
                 listEl.appendChild(btn);
             });
             lucide.createIcons();
         }
-
         function updateBookmarkButtonState() {
             const btn = document.getElementById('btn-bookmark-toggle');
             if (!btn) return;
-
             const bookmarks = getSavedBookmarks();
             const isBookmarked = bookmarks.some(item => Math.abs(item.lat - currentLat) < 0.01 && Math.abs(item.lon - currentLon) < 0.01);
-
             if (isBookmarked) {
                 btn.innerHTML = `<i data-lucide="check" class="w-3 h-3"></i> บันทึกแล้ว`;
                 btn.className = `text-[10px] bg-emerald-500/30 text-emerald-200 border border-emerald-500/50 px-2 py-0.5 rounded-lg flex items-center gap-1 font-semibold transition-all`;
@@ -938,219 +1017,97 @@
             lucide.createIcons();
         }
 
-        /* ================================================================ */
-
         function loadThaiGeographyData() {
             const thaiGeoUrl = 'https://raw.githubusercontent.com/thailand-geography-data/thailand-geography-json/main/src/geography.json';
-            
             fetch(thaiGeoUrl)
                 .then(res => res.json())
-                .then(data => {
-                    thaiDataCache = data;
-                    populateProvinceDropdown();
-                })
-                .catch(err => {
-                    console.error("Error loading Thai Geography data:", err);
-                    populateFallbackProvinces();
-                });
+                .then(data => { thaiDataCache = data; populateProvinceDropdown(); })
+                .catch(() => { populateFallbackProvinces(); });
         }
-
         function populateProvinceDropdown() {
             const provSelect = document.getElementById('province-select');
             if (!provSelect) return;
             provSelect.innerHTML = '<option value="">-- เลือกจังหวัด --</option>';
-
             const provincesMap = new Map();
-            thaiDataCache.forEach(item => {
-                if (!provincesMap.has(item.provinceNameTh)) {
-                    provincesMap.set(item.provinceNameTh, item.provinceCode);
-                }
-            });
-
-            const sortedProvinces = Array.from(provincesMap.entries()).sort((a, b) => {
-                if (a[0] === 'กรุงเทพมหานคร') return -1;
-                return a[0].localeCompare(b[0], 'th');
-            });
-
-            sortedProvinces.forEach(([name, code]) => {
-                const opt = document.createElement('option');
-                opt.value = code;
-                opt.textContent = name;
-                opt.className = 'text-slate-900';
+            thaiDataCache.forEach(item => { if (!provincesMap.has(item.provinceNameTh)) provincesMap.set(item.provinceNameTh, item.provinceCode); });
+            Array.from(provincesMap.entries()).sort((a, b) => a[0] === 'กรุงเทพมหานคร' ? -1 : a[0].localeCompare(b[0], 'th')).forEach(([name, code]) => {
+                const opt = document.createElement('option'); opt.value = code; opt.textContent = name; opt.className = 'text-slate-900';
                 provSelect.appendChild(opt);
             });
         }
-
         function onProvinceChange() {
             const provCode = document.getElementById('province-select').value;
             const distSelect = document.getElementById('district-select');
             const subdistSelect = document.getElementById('subdistrict-select');
-
             distSelect.innerHTML = '<option value="">-- เลือกอำเภอ/เขต --</option>';
             subdistSelect.innerHTML = '<option value="">-- เลือกตำบลก่อน --</option>';
-
             if (!provCode || !thaiDataCache) return;
-
             const isBkk = (provCode == 10 || provCode == '10');
             const districtsMap = new Map();
-
-            thaiDataCache.filter(item => item.provinceCode == provCode).forEach(item => {
-                if (!districtsMap.has(item.districtNameTh)) {
-                    districtsMap.set(item.districtNameTh, item.districtCode);
-                }
-            });
-
-            const sortedDistricts = Array.from(districtsMap.entries()).sort((a, b) => a[0].localeCompare(b[0], 'th'));
-
-            sortedDistricts.forEach(([name, code]) => {
-                const opt = document.createElement('option');
-                opt.value = code;
-                opt.textContent = isBkk ? `เขต${name}` : `อำเภอ${name}`;
-                opt.className = 'text-slate-900';
+            thaiDataCache.filter(item => item.provinceCode == provCode).forEach(item => { if (!districtsMap.has(item.districtNameTh)) districtsMap.set(item.districtNameTh, item.districtCode); });
+            Array.from(districtsMap.entries()).sort((a, b) => a[0].localeCompare(b[0], 'th')).forEach(([name, code]) => {
+                const opt = document.createElement('option'); opt.value = code; opt.textContent = isBkk ? `เขต${name}` : `อำเภอ${name}`; opt.className = 'text-slate-900';
                 distSelect.appendChild(opt);
             });
         }
-
         function onDistrictChange() {
             const distCode = document.getElementById('district-select').value;
             const subdistSelect = document.getElementById('subdistrict-select');
-
             subdistSelect.innerHTML = '<option value="">-- เลือกตำบล/แขวง --</option>';
-
             if (!distCode || !thaiDataCache) return;
-
             const provCode = document.getElementById('province-select').value;
             const isBkk = (provCode == 10 || provCode == '10');
             const subdistrictsMap = new Map();
-
-            thaiDataCache.filter(item => item.districtCode == distCode).forEach(item => {
-                if (!subdistrictsMap.has(item.subdistrictNameTh)) {
-                    subdistrictsMap.set(item.subdistrictNameTh, item.subdistrictCode);
-                }
-            });
-
-            const sortedSubdistricts = Array.from(subdistrictsMap.entries()).sort((a, b) => a[0].localeCompare(b[0], 'th'));
-
-            sortedSubdistricts.forEach(([name, code]) => {
-                const opt = document.createElement('option');
-                opt.value = code;
-                opt.textContent = isBkk ? `แขวง${name}` : `ตำบล${name}`;
-                opt.className = 'text-slate-900';
+            thaiDataCache.filter(item => item.districtCode == distCode).forEach(item => { if (!subdistrictsMap.has(item.subdistrictNameTh)) subdistrictsMap.set(item.subdistrictNameTh, item.subdistrictCode); });
+            Array.from(subdistrictsMap.entries()).sort((a, b) => a[0].localeCompare(b[0], 'th')).forEach(([name, code]) => {
+                const opt = document.createElement('option'); opt.value = code; opt.textContent = isBkk ? `แขวง${name}` : `ตำบล${name}`; opt.className = 'text-slate-900';
                 subdistSelect.appendChild(opt);
             });
-
             const distObj = thaiDataCache.find(item => item.districtCode == distCode);
             if (distObj) {
-                const provName = distObj.provinceNameTh;
-                const distName = distObj.districtNameTh;
-                const queryStr = isBkk ? `เขต${distName} กรุงเทพมหานคร` : `อำเภอ${distName} จังหวัด${provName}`;
-                geocodeAndSelect(queryStr, `${isBkk ? 'เขต' : 'อำเภอ'}${distName} จังหวัด${provName}`);
+                const queryStr = isBkk ? `เขต${distObj.districtNameTh} กรุงเทพมหานคร` : `อำเภอ${distObj.districtNameTh} จังหวัด${distObj.provinceNameTh}`;
+                geocodeAndSelect(queryStr, `${isBkk ? 'เขต' : 'อำเภอ'}${distObj.districtNameTh} จังหวัด${distObj.provinceNameTh}`);
             }
         }
-
         function onSubdistrictChange() {
             const subdistCode = document.getElementById('subdistrict-select').value;
             if (!subdistCode || !thaiDataCache) return;
-
             const item = thaiDataCache.find(i => i.subdistrictCode == subdistCode);
             if (item) {
                 const isBkk = (item.provinceCode == 10 || item.provinceCode == '10');
-                const subLabel = isBkk ? `แขวง${item.subdistrictNameTh}` : `ตำบล${item.subdistrictNameTh}`;
-                const distLabel = isBkk ? `เขต${item.districtNameTh}` : `อำเภอ${item.districtNameTh}`;
-                const provLabel = `จังหวัด${item.provinceNameTh}`;
-                
-                const fullLocationText = `${subLabel} ${distLabel} ${provLabel}`;
-                const searchQuery = `${item.subdistrictNameTh} ${item.districtNameTh} ${item.provinceNameTh}`;
-                
-                geocodeAndSelect(searchQuery, fullLocationText);
+                geocodeAndSelect(`${item.subdistrictNameTh} ${item.districtNameTh} ${item.provinceNameTh}`, `${isBkk ? 'แขวง' : 'ตำบล'}${item.subdistrictNameTh} ${isBkk ? 'เขต' : 'อำเภอ'}${item.districtNameTh} จังหวัด${item.provinceNameTh}`);
             }
         }
-
         function searchLocationByName() {
             const inputVal = document.getElementById('search-input').value.trim();
             if (!inputVal) return;
-
             document.getElementById('search-status').innerText = 'กำลังค้นหา...';
             geocodeAndSelect(inputVal, inputVal);
         }
-
         function geocodeAndSelect(queryText, displayLabel) {
-            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(queryText)}&countrycodes=th&limit=1&accept-language=th`;
-
-            fetch(url)
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(queryText)}&countrycodes=th&limit=1&accept-language=th`)
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.length > 0) {
-                        const lat = parseFloat(data[0].lat);
-                        const lon = parseFloat(data[0].lon);
-
-                        currentLat = lat;
-                        currentLon = lon;
+                        currentLat = parseFloat(data[0].lat); currentLon = parseFloat(data[0].lon);
                         currentLocName = displayLabel || data[0].display_name.split(',')[0];
-
                         document.getElementById('location-text').innerText = currentLocName;
                         document.getElementById('search-status').innerText = 'พบพื้นที่แล้ว';
-
-                        initMap(lat, lon);
-                        fetchWeatherData(lat, lon);
+                        initMap(currentLat, currentLon); fetchWeatherData(currentLat, currentLon);
                         updateBookmarkButtonState();
-                    } else {
-                        document.getElementById('search-status').innerText = 'ไม่พบพิกัด กรุณาลองใหม่';
-                    }
+                    } else { document.getElementById('search-status').innerText = 'ไม่พบพิกัด'; }
                 })
-                .catch(() => {
-                    document.getElementById('search-status').innerText = 'ค้นหาล้มเหลว';
-                });
+                .catch(() => { document.getElementById('search-status').innerText = 'ค้นหาล้มเหลว'; });
         }
 
         function initMap(lat, lon) {
             if (!map) {
                 map = L.map('map', { zoomControl: false, maxZoom: 8, minZoom: 5 }).setView([13.7563, 100.5018], 6);
-                
-                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-                    maxZoom: 8,
-                    maxNativeZoom: 8,
-                    attribution: 'Tiles &copy; Esri'
-                }).addTo(map);
-
-                const customIcon = L.divIcon({
-                    className: 'custom-div-icon',
-                    html: `<div style="background-color: #10b981; width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
-                            <div class="pulse-marker"></div>
-                           </div>`,
-                    iconSize: [14, 14],
-                    iconAnchor: [7, 7]
-                });
-
-                userMarker = L.marker([lat, lon], { icon: customIcon }).addTo(map);
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { maxZoom: 8, maxNativeZoom: 8, attribution: 'Tiles &copy; Esri' }).addTo(map);
+                userMarker = L.marker([lat, lon], { icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="background-color: #10b981; width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.5);"><div class="pulse-marker"></div></div>`, iconSize: [14, 14], iconAnchor: [7, 7] }) }).addTo(map);
                 loadRadarOverlay();
             } else {
                 userMarker.setLatLng([lat, lon]);
-            }
-        }
-
-        function initFloodMap() {
-            if (!floodMap) {
-                floodMap = L.map('flood-map', { zoomControl: false, maxZoom: 8, minZoom: 5 }).setView([13.7563, 100.5018], 6);
-                
-                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-                    maxZoom: 8,
-                    maxNativeZoom: 8,
-                    attribution: 'Tiles &copy; Esri'
-                }).addTo(floodMap);
-
-                fetch('https://api.rainviewer.com/public/weather-maps.json')
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data && data.radar && data.radar.past && data.radar.past.length > 0) {
-                            const latestRadar = data.radar.past[data.radar.past.length - 1];
-                            L.tileLayer(`https://tilecache.rainviewer.com${latestRadar.path}/256/{z}/{x}/{y}/2/1_1.png`, {
-                                maxZoom: 8, maxNativeZoom: 8, opacity: 0.65, tileSize: 256, zIndex: 100
-                            }).addTo(floodMap);
-                        }
-                    });
-            } else {
-                floodMap.invalidateSize();
             }
         }
 
@@ -1160,16 +1117,10 @@
                 .then(data => {
                     if (data && data.radar && data.radar.past && data.radar.past.length > 0) {
                         const latestRadar = data.radar.past[data.radar.past.length - 1];
-                        const radarPath = latestRadar.path;
-                        
                         if (radarLayer) map.removeLayer(radarLayer);
-                        
-                        radarLayer = L.tileLayer(`https://tilecache.rainviewer.com${radarPath}/256/{z}/{x}/{y}/2/1_1.png`, {
-                            maxZoom: 8, maxNativeZoom: 8, opacity: 0.65, tileSize: 256, zIndex: 100
-                        }).addTo(map);
+                        radarLayer = L.tileLayer(`https://tilecache.rainviewer.com${latestRadar.path}/256/{z}/{x}/{y}/2/1_1.png`, { maxZoom: 8, maxNativeZoom: 8, opacity: 0.65, tileSize: 256, zIndex: 100 }).addTo(map);
                     }
-                })
-                .catch(err => console.error("Error loading rain radar:", err));
+                }).catch(() => {});
         }
 
         function getWeatherInfo(code, isDay = 1) {
@@ -1194,18 +1145,14 @@
             return weatherMap[code] || { desc: 'สภาพอากาศทั่วไป', icon: 'cloud', color: 'opacity-70' };
         }
 
-        /* 🎨 ฟังก์ชันจัดการแอนิเมชันกราฟิกสภาพอากาศ (ครอบคลุมเมฆบางส่วนแล้ว) */
         function updateWeatherBackground(code, isDay) {
             const cardBg = document.getElementById('weather-card-bg');
             const effectLayer = document.getElementById('weather-effect-layer');
             if (!cardBg || !effectLayer) return;
-
-            effectLayer.innerHTML = ''; // ล้างเอฟเฟกต์เก่าออกก่อน
+            effectLayer.innerHTML = '';
             
             if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) {
-                // 🌧️ ฝนตก
                 cardBg.className = "rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-sky-400/35 bg-gradient-to-br from-slate-800 via-sky-950 to-blue-950 text-white relative overflow-hidden";
-                
                 for (let i = 0; i < 18; i++) {
                     const drop = document.createElement('div');
                     drop.className = 'effect-rain-drop';
@@ -1215,66 +1162,29 @@
                     effectLayer.appendChild(drop);
                 }
             } else if ([95].includes(code)) {
-                // ⚡ พายุฝนฟ้าคะนอง
                 cardBg.className = "rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-purple-400/35 bg-gradient-to-br from-purple-950 via-slate-900 to-indigo-950 text-white relative overflow-hidden";
-                
-                const flash = document.createElement('div');
-                flash.className = 'effect-lightning';
-                effectLayer.appendChild(flash);
-
+                const flash = document.createElement('div'); flash.className = 'effect-lightning'; effectLayer.appendChild(flash);
                 for (let i = 0; i < 12; i++) {
-                    const drop = document.createElement('div');
-                    drop.className = 'effect-rain-drop';
-                    drop.style.left = `${Math.random() * 100}%`;
-                    drop.style.animationDuration = `${0.4 + Math.random() * 0.4}s`;
-                    effectLayer.appendChild(drop);
+                    const drop = document.createElement('div'); drop.className = 'effect-rain-drop'; drop.style.left = `${Math.random() * 100}%`; drop.style.animationDuration = `${0.4 + Math.random() * 0.4}s`; effectLayer.appendChild(drop);
                 }
             } else if ([3, 45, 48].includes(code)) {
-                // ☁️ เมฆมาก / หมอก
                 cardBg.className = "rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-slate-400/35 bg-gradient-to-br from-slate-800 via-teal-950 to-slate-950 text-white relative overflow-hidden";
-                
                 for (let i = 0; i < 3; i++) {
-                    const cloud = document.createElement('div');
-                    cloud.className = 'effect-cloud-puff';
-                    cloud.style.width = `${100 + i * 40}px`;
-                    cloud.style.height = `${40 + i * 15}px`;
-                    cloud.style.top = `${10 + i * 35}%`;
-                    cloud.style.animationDuration = `${14 + i * 6}s`;
-                    cloud.style.animationDelay = `${i * 3}s`;
-                    effectLayer.appendChild(cloud);
+                    const cloud = document.createElement('div'); cloud.className = 'effect-cloud-puff'; cloud.style.width = `${100 + i * 40}px`; cloud.style.height = `${40 + i * 15}px`; cloud.style.top = `${10 + i * 35}%`; cloud.style.animationDuration = `${14 + i * 6}s`; cloud.style.animationDelay = `${i * 3}s`; effectLayer.appendChild(cloud);
                 }
             } else if ([0, 1, 2].includes(code)) {
-                // ☀️ ฟ้าใส / มีเมฆบางส่วน / ปลอดโปร่ง
                 if (isDay) {
                     cardBg.className = "rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-amber-400/35 bg-gradient-to-br from-sky-600 via-teal-800 to-emerald-950 text-white relative overflow-hidden";
-                    
-                    const sunGlow = document.createElement('div');
-                    sunGlow.className = 'effect-sun';
-                    effectLayer.appendChild(sunGlow);
-
+                    const sunGlow = document.createElement('div'); sunGlow.className = 'effect-sun'; effectLayer.appendChild(sunGlow);
                     if (code === 1 || code === 2) {
                         for (let i = 0; i < 2; i++) {
-                            const cloud = document.createElement('div');
-                            cloud.className = 'effect-cloud-puff';
-                            cloud.style.width = `${90 + i * 30}px`;
-                            cloud.style.height = `${35 + i * 10}px`;
-                            cloud.style.top = `${15 + i * 40}%`;
-                            cloud.style.animationDuration = `${18 + i * 5}s`;
-                            cloud.style.animationDelay = `${i * 4}s`;
-                            effectLayer.appendChild(cloud);
+                            const cloud = document.createElement('div'); cloud.className = 'effect-cloud-puff'; cloud.style.width = `${90 + i * 30}px`; cloud.style.height = `${35 + i * 10}px`; cloud.style.top = `${15 + i * 40}%`; cloud.style.animationDuration = `${18 + i * 5}s`; cloud.style.animationDelay = `${i * 4}s`; effectLayer.appendChild(cloud);
                         }
                     }
                 } else {
                     cardBg.className = "rounded-2xl p-4 shadow-2xl transition-all duration-700 border border-blue-400/35 bg-gradient-to-br from-indigo-950 via-slate-900 to-blue-950 text-white relative overflow-hidden";
-                    
                     if (code === 1 || code === 2) {
-                        const cloud = document.createElement('div');
-                        cloud.className = 'effect-cloud-puff';
-                        cloud.style.width = '100px';
-                        cloud.style.height = '40px';
-                        cloud.style.top = '25%';
-                        cloud.style.animationDuration = '20s';
-                        effectLayer.appendChild(cloud);
+                        const cloud = document.createElement('div'); cloud.className = 'effect-cloud-puff'; cloud.style.width = '100px'; cloud.style.height = '40px'; cloud.style.top = '25%'; cloud.style.animationDuration = '20s'; effectLayer.appendChild(cloud);
                     }
                 }
             } else {
@@ -1283,44 +1193,19 @@
         }
 
         function fetchWeatherData(lat, lon) {
-            const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5&timezone=Asia%2FBangkok`;
-            const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,weather_code,is_day,uv_index&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=Asia%2FBangkok&forecast_days=5`;
-
-            fetch(url)
+            fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5&timezone=Asia%2FBangkok`)
                 .then(res => res.json())
                 .then(aqData => {
                     if (aqData && aqData.current) {
                         const pm25Val = Math.round(aqData.current.pm2_5 || 0);
-                        const pmEl = document.getElementById('pm25-val');
-                        const badgeEl = document.getElementById('pm25-badge');
+                        document.getElementById('pm25-val').innerText = pm25Val;
                         const alertBanner = document.getElementById('alert-banner');
-                        const alertText = document.getElementById('alert-text');
-                        
-                        if (pmEl) pmEl.innerText = pm25Val;
-
-                        if (pm25Val > 37.5) {
-                            if (alertBanner) alertBanner.classList.remove('hidden');
-                            if (alertText) alertText.innerText = `แจ้งเตือนค่าฝุ่น PM2.5 สูงวิกฤต (${pm25Val} µg/m³) ควรงดกิจกรรมกลางแจ้ง!`;
-                        } else {
-                            if (alertBanner) alertBanner.classList.add('hidden');
-                        }
-
-                        if (badgeEl) {
-                            if (pm25Val <= 15) {
-                                badgeEl.className = 'inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-black/20 border border-current opacity-90 text-emerald-500';
-                            } else if (pm25Val <= 25) {
-                                badgeEl.className = 'inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-black/20 border border-current opacity-90 text-yellow-600';
-                            } else if (pm25Val <= 37.5) {
-                                badgeEl.className = 'inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-black/20 border border-current opacity-90 text-orange-500';
-                            } else {
-                                badgeEl.className = 'inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-black/20 border border-current opacity-90 text-red-500';
-                            }
-                        }
+                        if (pm25Val > 37.5) { alertBanner.classList.remove('hidden'); document.getElementById('alert-text').innerText = `แจ้งเตือนค่าฝุ่น PM2.5 สูงวิกฤต (${pm25Val} µg/m³) ควรงดกิจกรรมกลางแจ้ง!`; }
+                        else { alertBanner.classList.add('hidden'); }
                     }
-                })
-                .catch(err => console.error("Error fetching air quality:", err));
+                }).catch(() => {});
 
-            fetch(weatherUrl)
+            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,weather_code,is_day,uv_index&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=Asia%2FBangkok&forecast_days=5`)
                 .then(res => res.json())
                 .then(data => {
                     const current = data.current;
@@ -1336,46 +1221,26 @@
 
                     const nowIsoString = new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' });
                     const nowDate = new Date(nowIsoString);
-                    const currentHourStr = nowDate.getFullYear() + '-' + 
-                        String(nowDate.getMonth() + 1).padStart(2, '0') + '-' + 
-                        String(nowDate.getDate()).padStart(2, '0') + 'T' + 
-                        String(nowDate.getHours()).padStart(2, '0') + ':00';
-
+                    const currentHourStr = nowDate.getFullYear() + '-' + String(nowDate.getMonth() + 1).padStart(2, '0') + '-' + String(nowDate.getDate()).padStart(2, '0') + 'T' + String(nowDate.getHours()).padStart(2, '0') + ':00';
                     let startIndex = timeArr.findIndex(timeStr => timeStr.startsWith(currentHourStr.slice(0, 13)));
                     if (startIndex === -1) startIndex = 0;
 
-                    const currentUv = hourly.uv_index && hourly.uv_index[startIndex] !== undefined 
-                        ? hourly.uv_index[startIndex] 
-                        : 0.0;
-                    document.getElementById('uv-index-val').innerText = currentUv.toFixed(1);
+                    document.getElementById('uv-index-val').innerText = (hourly.uv_index && hourly.uv_index[startIndex] !== undefined ? hourly.uv_index[startIndex] : 0.0).toFixed(1);
 
                     const weatherMeta = getWeatherInfo(current.weather_code, current.is_day);
                     document.getElementById('weather-desc').innerText = weatherMeta.desc;
                     document.getElementById('weather-main-icon').className = `${weatherMeta.color} p-2.5 bg-white/20 rounded-2xl border border-white/30 shadow-lg backdrop-blur-md`;
                     document.getElementById('weather-main-icon').innerHTML = `<i data-lucide="${weatherMeta.icon}" class="w-10 h-10"></i>`;
-
                     updateWeatherBackground(current.weather_code, current.is_day);
 
                     let rainInHours = -1;
                     for (let i = startIndex; i < startIndex + 20 && i < timeArr.length; i++) {
-                        const prob = defaultProb[i] !== undefined ? defaultProb[i] : 0;
-                        if (prob >= 50) {
-                            rainInHours = i - startIndex;
-                            break;
-                        }
+                        if ((defaultProb[i] !== undefined ? defaultProb[i] : 0) >= 50) { rainInHours = i - startIndex; break; }
                     }
-
                     const countdownEl = document.getElementById('rain-countdown-val');
-                    if (rainInHours === 0) {
-                        countdownEl.innerText = 'ฝนตกตอนนี้';
-                        countdownEl.className = 'text-xs font-bold text-amber-300 mt-1 animate-pulse';
-                    } else if (rainInHours > 0) {
-                        countdownEl.innerText = `อีก ${rainInHours} ชม.`;
-                        countdownEl.className = 'text-xs font-bold text-cyan-300 mt-1';
-                    } else {
-                        countdownEl.innerText = 'ไม่มีฝน 20 ชม.';
-                        countdownEl.className = 'text-[11px] font-bold text-white/90 mt-1';
-                    }
+                    if (rainInHours === 0) { countdownEl.innerText = 'ฝนตกตอนนี้'; countdownEl.className = 'text-xs font-bold text-amber-300 mt-1 animate-pulse'; }
+                    else if (rainInHours > 0) { countdownEl.innerText = `อีก ${rainInHours} ชม.`; countdownEl.className = 'text-xs font-bold text-cyan-300 mt-1'; }
+                    else { countdownEl.innerText = 'ไม่มีฝน 20 ชม.'; countdownEl.className = 'text-[11px] font-bold text-white/90 mt-1'; }
 
                     const config = themeConfigs[currentThemeKey] || themeConfigs.emerald;
                     const hourlyContainer = document.getElementById('hourly-container');
@@ -1383,152 +1248,71 @@
                     const thaiDays = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
 
                     for (let i = startIndex; i < startIndex + 20 && i < timeArr.length; i++) {
-                        const rawTime = timeArr[i];
-                        const itemDate = new Date(rawTime.replace('T', ' '));
+                        const itemDate = new Date(timeArr[i].replace('T', ' '));
                         const isCurrentHour = (i === startIndex);
-
-                        const hourNum = itemDate.getHours();
-                        const hourFormatted = String(hourNum).padStart(2, '0') + ':00';
-                        const temp = tempArr[i] !== undefined ? Math.round(tempArr[i]) : Math.round(current.temperature_2m);
-                        const ensembleProb = defaultProb[i] !== undefined ? defaultProb[i] : 0;
-                        const code = isCurrentHour ? current.weather_code : (hourly.weather_code && hourly.weather_code[i] !== undefined ? hourly.weather_code[i] : 0);
+                        const wInfo = getWeatherInfo(isCurrentHour ? current.weather_code : (hourly.weather_code[i] || 0), isCurrentHour ? current.is_day : (itemDate.getHours() >= 6 && itemDate.getHours() <= 18 ? 1 : 0));
                         
-                        let isDay = (hourNum >= 6 && hourNum <= 18) ? 1 : 0;
-                        if (isCurrentHour) isDay = current.is_day;
-                        
-                        const wInfo = getWeatherInfo(code, isDay);
-                        const dateLabel = `${thaiDays[itemDate.getDay()]} ${itemDate.getDate()}`;
-
                         const card = document.createElement('div');
-                        card.className = `flex-shrink-0 w-20 text-center rounded-2xl p-2.5 transition-all border ${
-                            isCurrentHour 
-                                ? config.hourlyCardActive + ' font-bold scale-105' 
-                                : config.hourlyCardNormal
-                        }`;
-
+                        card.className = `flex-shrink-0 w-20 text-center rounded-2xl p-2.5 transition-all border ${isCurrentHour ? config.hourlyCardActive + ' font-bold scale-105' : config.hourlyCardNormal}`;
                         card.innerHTML = `
-                            <div class="text-[10px] opacity-80 mb-0.5">${dateLabel}</div>
-                            <div class="text-xs font-semibold ${isCurrentHour ? 'font-extrabold' : ''}">${isCurrentHour ? 'ตอนนี้' : hourFormatted}</div>
-                            <div class="my-2 flex justify-center ${isCurrentHour ? 'text-white' : wInfo.color}">
-                                <i data-lucide="${wInfo.icon}" class="w-7 h-7"></i>
-                            </div>
-                            <div class="text-sm font-extrabold">${temp}°</div>
-                            <div class="text-[10px] opacity-90 font-medium mt-1 flex items-center justify-center gap-0.5">
-                                <i data-lucide="droplet" class="w-3 h-3 text-sky-500"></i>${ensembleProb}%
-                            </div>
+                            <div class="text-[10px] opacity-80 mb-0.5">${thaiDays[itemDate.getDay()]} ${itemDate.getDate()}</div>
+                            <div class="text-xs font-semibold">${isCurrentHour ? 'ตอนนี้' : String(itemDate.getHours()).padStart(2, '0') + ':00'}</div>
+                            <div class="my-2 flex justify-center ${isCurrentHour ? 'text-white' : wInfo.color}"><i data-lucide="${wInfo.icon}" class="w-7 h-7"></i></div>
+                            <div class="text-sm font-extrabold">${tempArr[i] !== undefined ? Math.round(tempArr[i]) : Math.round(current.temperature_2m)}°</div>
+                            <div class="text-[10px] opacity-90 font-medium mt-1 flex items-center justify-center gap-0.5"><i data-lucide="droplet" class="w-3 h-3 text-sky-500"></i>${defaultProb[i] || 0}%</div>
                         `;
                         hourlyContainer.appendChild(card);
                     }
 
-                    const daily = data.daily || {};
                     const dailyContainer = document.getElementById('daily-container');
                     dailyContainer.innerHTML = '';
-
-                    if (daily.time && daily.time.length > 0) {
+                    const daily = data.daily || {};
+                    if (daily.time) {
                         for (let d = 0; d < daily.time.length && d < 5; d++) {
                             const dDate = new Date(daily.time[d]);
-                            const dayName = d === 0 ? 'วันนี้' : thaiDays[dDate.getDay()] + ' ' + dDate.getDate();
-                            const maxT = Math.round(daily.temperature_2m_max[d]);
-                            const minT = Math.round(daily.temperature_2m_min[d]);
-                            const dCode = daily.weather_code[d];
-                            const dRainProb = daily.precipitation_probability_max ? daily.precipitation_probability_max[d] : 0;
-                            const dInfo = getWeatherInfo(dCode, 1);
-
+                            const dInfo = getWeatherInfo(daily.weather_code[d], 1);
                             const row = document.createElement('div');
                             row.className = `flex items-center justify-between px-3 py-2.5 rounded-xl border border-white/10 ${['sky', 'orange', 'white', 'pink'].includes(currentThemeKey) ? 'bg-white/60' : 'bg-black/20'}`;
-                            
                             row.innerHTML = `
-                                <div class="w-24 text-xs font-bold">${dayName}</div>
-                                <div class="flex items-center gap-2">
-                                    <div class="${dInfo.color}"><i data-lucide="${dInfo.icon}" class="w-5 h-5"></i></div>
-                                    <span class="text-[11px] opacity-80">${dInfo.desc}</span>
-                                </div>
-                                <div class="flex items-center gap-3 text-xs">
-                                    <span class="text-sky-500 font-medium flex items-center gap-0.5"><i data-lucide="droplet" class="w-3 h-3"></i>${dRainProb}%</span>
-                                    <span class="font-bold">${maxT}° <span class="opacity-60 font-normal">/ ${minT}°</span></span>
-                                </div>
+                                <div class="w-24 text-xs font-bold">${d === 0 ? 'วันนี้' : thaiDays[dDate.getDay()] + ' ' + dDate.getDate()}</div>
+                                <div class="flex items-center gap-2"><div class="${dInfo.color}"><i data-lucide="${dInfo.icon}" class="w-5 h-5"></i></div><span class="text-[11px] opacity-80">${dInfo.desc}</span></div>
+                                <div class="flex items-center gap-3 text-xs"><span class="text-sky-500 font-medium flex items-center gap-0.5"><i data-lucide="droplet" class="w-3 h-3"></i>${daily.precipitation_probability_max[d]}%</span><span class="font-bold">${Math.round(daily.temperature_2m_max[d])}° <span class="opacity-60 font-normal">/ ${Math.round(daily.temperature_2m_min[d])}°</span></span></div>
                             `;
                             dailyContainer.appendChild(row);
                         }
                     }
-
                     lucide.createIcons();
-                })
-                .catch(err => console.error("Error fetching weather:", err));
+                }).catch(() => {});
         }
 
         function loadTopPM25Data() {
             const topListEl = document.getElementById('pm25-top-list');
             if (!topListEl) return;
             topListEl.innerHTML = '<div class="text-center py-6 text-xs opacity-80 animate-pulse">กำลังประมวลผลข้อมูลฝุ่นทั่วไทย...</div>';
-
             const thaiCities = [
-                { name: 'เชียงใหม่', lat: 18.7883, lon: 98.9853 },
-                { name: 'เชียงราย', lat: 19.9105, lon: 99.8406 },
-                { name: 'แม่ฮ่องสอน', lat: 19.3020, lon: 97.9654 },
-                { name: 'น่าน', lat: 18.7838, lon: 100.7781 },
-                { name: 'ลำปาง', lat: 18.2888, lon: 99.4920 },
-                { name: 'กรุงเทพมหานคร', lat: 13.7563, lon: 100.5018 },
-                { name: 'นนทบุรี', lat: 13.8591, lon: 100.5217 },
-                { name: 'สมุทรปราการ', lat: 13.5991, lon: 100.5968 },
-                { name: 'ขอนแก่น', lat: 16.4419, lon: 102.8360 },
-                { name: 'นครราชสีมา', lat: 14.9799, lon: 102.0978 },
-                { name: 'ชลบุรี', lat: 13.3611, lon: 100.9847 },
-                { name: 'กาญจนบุรี', lat: 14.0227, lon: 99.5328 }
+                { name: 'เชียงใหม่', lat: 18.7883, lon: 98.9853 }, { name: 'เชียงราย', lat: 19.9105, lon: 99.8406 },
+                { name: 'แม่ฮ่องสอน', lat: 19.3020, lon: 97.9654 }, { name: 'น่าน', lat: 18.7838, lon: 100.7781 },
+                { name: 'ลำปาง', lat: 18.2888, lon: 99.4920 }, { name: 'กรุงเทพมหานคร', lat: 13.7563, lon: 100.5018 },
+                { name: 'นนทบุรี', lat: 13.8591, lon: 100.5217 }, { name: 'สมุทรปราการ', lat: 13.5991, lon: 100.5968 },
+                { name: 'ขอนแก่น', lat: 16.4419, lon: 102.8360 }, { name: 'นครราชสีมา', lat: 14.9799, lon: 102.0978 },
+                { name: 'ชลบุรี', lat: 13.3611, lon: 100.9847 }, { name: 'กาญจนบุรี', lat: 14.0227, lon: 99.5328 }
             ];
+            Promise.all(thaiCities.map(c => fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${c.lat}&longitude=${c.lon}&current=pm2_5&timezone=Asia%2FBangkok`).then(res => res.json()).then(d => ({ name: c.name, pm25: d.current ? Math.round(d.current.pm2_5 || 0) : 0 })).catch(() => ({ name: c.name, pm25: 0 }))))
+                .then(results => {
+                    results.sort((a, b) => b.pm25 - a.pm25);
+                    topListEl.innerHTML = '';
+                    results.slice(0, 10).forEach((item, index) => {
+                        let badgeClass = 'bg-black/10 border-emerald-500/50 text-emerald-500', statusText = 'ดีเยี่ยม';
+                        if (item.pm25 > 37.5) { badgeClass = 'bg-black/10 border-red-500/50 text-red-500'; statusText = 'มีผลต่อสุขภาพ'; }
+                        else if (item.pm25 > 25) { badgeClass = 'bg-black/10 border-orange-500/50 text-orange-500'; statusText = 'เริ่มมีผลกระทบ'; }
+                        else if (item.pm25 > 15) { badgeClass = 'bg-black/10 border-yellow-500/50 text-yellow-600'; statusText = 'ปานกลาง'; }
 
-            const promises = thaiCities.map(city => {
-                const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${city.lat}&longitude=${city.lon}&current=pm2_5&timezone=Asia%2FBangkok`;
-                return fetch(url)
-                    .then(res => res.json())
-                    .then(data => ({
-                        name: city.name,
-                        pm25: data.current ? Math.round(data.current.pm2_5 || 0) : 0
-                    }))
-                    .catch(() => ({ name: city.name, pm25: 0 }));
-            });
-
-            Promise.all(promises).then(results => {
-                results.sort((a, b) => b.pm25 - a.pm25);
-                const top10 = results.slice(0, 10);
-
-                topListEl.innerHTML = '';
-                top10.forEach((item, index) => {
-                    let badgeClass = 'bg-black/10 border-emerald-500/50 text-emerald-500';
-                    let statusText = 'ดีเยี่ยม';
-
-                    if (item.pm25 > 37.5) {
-                        badgeClass = 'bg-black/10 border-red-500/50 text-red-500';
-                        statusText = 'มีผลต่อสุขภาพ';
-                    } else if (item.pm25 > 25) {
-                        badgeClass = 'bg-black/10 border-orange-500/50 text-orange-500';
-                        statusText = 'เริ่มมีผลกระทบ';
-                    } else if (item.pm25 > 15) {
-                        badgeClass = 'bg-black/10 border-yellow-500/50 text-yellow-600';
-                        statusText = 'ปานกลาง';
-                    }
-
-                    const card = document.createElement('div');
-                    card.className = `p-3 rounded-xl border border-white/10 flex items-center justify-between ${['sky', 'orange', 'white', 'pink'].includes(currentThemeKey) ? 'bg-white/60' : 'bg-black/20'}`;
-                    card.innerHTML = `
-                        <div class="flex items-center gap-3">
-                            <span class="w-6 h-6 rounded-full ${index < 3 ? 'bg-amber-500 text-white font-extrabold' : 'bg-black/20 opacity-80'} text-xs flex items-center justify-center font-bold">
-                                ${index + 1}
-                            </span>
-                            <div>
-                                <h4 class="text-xs font-bold">${item.name}</h4>
-                                <span class="text-[10px] opacity-70">${statusText}</span>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-xs font-extrabold px-2.5 py-1 rounded-lg border ${badgeClass}">
-                                ${item.pm25} µg/m³
-                            </span>
-                        </div>
-                    `;
-                    topListEl.appendChild(card);
+                        const card = document.createElement('div');
+                        card.className = `p-3 rounded-xl border border-white/10 flex items-center justify-between ${['sky', 'orange', 'white', 'pink'].includes(currentThemeKey) ? 'bg-white/60' : 'bg-black/20'}`;
+                        card.innerHTML = `<div class="flex items-center gap-3"><span class="w-6 h-6 rounded-full ${index < 3 ? 'bg-amber-500 text-white font-extrabold' : 'bg-black/20 opacity-80'} text-xs flex items-center justify-center font-bold">${index + 1}</span><div><h4 class="text-xs font-bold">${item.name}</h4><span class="text-[10px] opacity-70">${statusText}</span></div></div><div class="text-right"><span class="text-xs font-extrabold px-2.5 py-1 rounded-lg border ${badgeClass}">${item.pm25} µg/m³</span></div>`;
+                        topListEl.appendChild(card);
+                    });
                 });
-            });
         }
 
         function useCurrentGPS() {
@@ -1536,49 +1320,26 @@
             if (navigator.geolocation && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
                 navigator.geolocation.getCurrentPosition(
                     (pos) => {
-                        const lat = pos.coords.latitude;
-                        const lon = pos.coords.longitude;
-                        currentLat = lat;
-                        currentLon = lon;
-                        
-                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=th`)
+                        currentLat = pos.coords.latitude; currentLon = pos.coords.longitude;
+                        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentLat}&lon=${currentLon}&accept-language=th`)
                             .then(res => res.json())
                             .then(data => {
                                 const addr = data.address || {};
-                                const sub = addr.suburb || addr.subdistrict || addr.village || '';
-                                const dist = addr.amphoe || addr.district || addr.city_district || '';
-                                const prov = addr.province || addr.state || '';
-                                
-                                currentLocName = `${sub ? sub + ' ' : ''}${dist ? dist + ' ' : ''}${prov}`;
+                                currentLocName = `${addr.suburb || addr.subdistrict || ''} ${addr.amphoe || addr.district || ''} ${addr.province || ''}`.trim();
                                 document.getElementById('location-text').innerText = currentLocName;
                                 updateBookmarkButtonState();
-                            })
-                            .catch(() => {
-                                currentLocName = `พิกัด GPS: ${lat.toFixed(2)}, ${lon.toFixed(2)}`;
-                                document.getElementById('location-text').innerText = currentLocName;
-                                updateBookmarkButtonState();
-                            });
-
-                        initMap(lat, lon);
-                        fetchWeatherData(lat, lon);
-                    },
-                    () => {
-                        fallbackToDefaultLocation();
-                    },
-                    { enableHighAccuracy: true, timeout: 5000 }
+                            }).catch(() => { currentLocName = `พิกัด GPS`; document.getElementById('location-text').innerText = currentLocName; updateBookmarkButtonState(); });
+                        initMap(currentLat, currentLon); fetchWeatherData(currentLat, currentLon);
+                    }, () => { fallbackToDefaultLocation(); }, { enableHighAccuracy: true, timeout: 5000 }
                 );
-            } else {
-                fallbackToDefaultLocation();
-            }
+            } else { fallbackToDefaultLocation(); }
         }
 
         function fallbackToDefaultLocation() {
             currentLocName = 'คลองข่อย นนทบุรี';
             document.getElementById('location-text').innerText = currentLocName;
-            currentLat = 13.9315;
-            currentLon = 100.4735;
-            initMap(currentLat, currentLon);
-            fetchWeatherData(currentLat, currentLon);
+            currentLat = 13.9315; currentLon = 100.4735;
+            initMap(currentLat, currentLon); fetchWeatherData(currentLat, currentLon);
             updateBookmarkButtonState();
         }
 
@@ -1586,12 +1347,8 @@
             const provSelect = document.getElementById('province-select');
             if (!provSelect) return;
             provSelect.innerHTML = '<option value="">-- เลือกจังหวัด --</option>';
-            const defaultProvinces = ['นนทบุรี', 'กรุงเทพมหานคร', 'ปทุมธานี', 'สมุทรปราการ', 'ชลบุรี', 'เชียงใหม่', 'ขอนแก่น', 'ภูเก็ต', 'พิษณุโลก'];
-            defaultProvinces.forEach(name => {
-                const opt = document.createElement('option');
-                opt.value = name;
-                opt.textContent = name;
-                opt.className = 'text-slate-900';
+            ['นนทบุรี', 'กรุงเทพมหานคร', 'ปทุมธานี', 'สมุทรปราการ', 'ชลบุรี', 'เชียงใหม่', 'ขอนแก่น', 'ภูเก็ต'].forEach(name => {
+                const opt = document.createElement('option'); opt.value = name; opt.textContent = name; opt.className = 'text-slate-900';
                 provSelect.appendChild(opt);
             });
         }
@@ -1605,9 +1362,7 @@
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Service Worker registered successfully!', reg))
-                    .catch(err => console.log('Service Worker registration failed:', err));
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
             });
         }
     </script>
