@@ -601,6 +601,7 @@
         let map, userMarker, radarLayer;
         let thaiDataCache = null;
         let currentLat = 13.9315, currentLon = 100.4735, currentLocName = "คลองข่อย นนทบุรี";
+        let lastDailyData = null; // 📌 เก็บข้อมูลวันล่าสุดไว้สำหรับเรนเดอร์ซ้ำเมื่อเปลี่ยนธีม
 
         let currentThemeKey = localStorage.getItem('savedWeatherTheme') || 'emerald';
 
@@ -738,7 +739,10 @@
                                    document.querySelector('#page-flood:not(.hidden)') ? 'flood' : 'emergency';
             switchTab(currentTabName);
 
-            // อัปเดตสีการ์ดชั่วโมงปัจจุบันให้เปลี่ยนธีมทันทีโดยไม่ต้องกดรีเฟรช
+            // 🛠️ อัปเดตข้อมูลพยากรณ์รายวัน และพยากรณ์รวมเพื่อไม่ให้การ์ดแหว่งค้าง
+            if (lastDailyData) {
+                renderDailyForecast(lastDailyData);
+            }
             if (typeof currentLat !== 'undefined' && typeof currentLon !== 'undefined') {
                 fetchWeatherData(currentLat, currentLon);
             }
@@ -1189,6 +1193,29 @@
             }
         }
 
+        // 🛠️ แยกฟังก์ชันสำหรับเรนเดอร์พยากรณ์อากาศ 5 วัน เพื่อความเสถียรและไม่แสดงพื้นที่ว่างเปล่า
+        function renderDailyForecast(daily) {
+            const dailyContainer = document.getElementById('daily-container');
+            if (!dailyContainer || !daily || !daily.time) return;
+            
+            dailyContainer.innerHTML = '';
+            const thaiDays = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
+
+            for (let d = 0; d < daily.time.length && d < 5; d++) {
+                const dDate = new Date(daily.time[d]);
+                const dInfo = getWeatherInfo(daily.weather_code[d], 1);
+                const row = document.createElement('div');
+                row.className = `flex items-center justify-between px-3 py-2.5 rounded-xl border border-white/10 ${['sky', 'orange', 'white', 'pink'].includes(currentThemeKey) ? 'bg-white/60' : 'bg-black/20'}`;
+                row.innerHTML = `
+                    <div class="w-24 text-xs font-bold">${d === 0 ? 'วันนี้' : thaiDays[dDate.getDay()] + ' ' + dDate.getDate()}</div>
+                    <div class="flex items-center gap-2"><div class="${dInfo.color}"><i data-lucide="${dInfo.icon}" class="w-5 h-5"></i></div><span class="text-[11px] opacity-80">${dInfo.desc}</span></div>
+                    <div class="flex items-center gap-3 text-xs"><span class="text-sky-500 font-medium flex items-center gap-0.5"><i data-lucide="droplet" class="w-3 h-3"></i>${daily.precipitation_probability_max ? daily.precipitation_probability_max[d] : 0}%</span><span class="font-bold">${Math.round(daily.temperature_2m_max[d])}° <span class="opacity-60 font-normal">/ ${Math.round(daily.temperature_2m_min[d])}°</span></span></div>
+                `;
+                dailyContainer.appendChild(row);
+            }
+            lucide.createIcons();
+        }
+
         function fetchWeatherData(lat, lon) {
             fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5&timezone=Asia%2FBangkok`)
                 .then(res => res.json())
@@ -1273,22 +1300,10 @@
                         hourlyContainer.appendChild(card);
                     }
 
-                    const dailyContainer = document.getElementById('daily-container');
-                    dailyContainer.innerHTML = '';
-                    const daily = data.daily || {};
-                    if (daily.time) {
-                        for (let d = 0; d < daily.time.length && d < 5; d++) {
-                            const dDate = new Date(daily.time[d]);
-                            const dInfo = getWeatherInfo(daily.weather_code[d], 1);
-                            const row = document.createElement('div');
-                            row.className = `flex items-center justify-between px-3 py-2.5 rounded-xl border border-white/10 ${['sky', 'orange', 'white', 'pink'].includes(currentThemeKey) ? 'bg-white/60' : 'bg-black/20'}`;
-                            row.innerHTML = `
-                                <div class="w-24 text-xs font-bold">${d === 0 ? 'วันนี้' : thaiDays[dDate.getDay()] + ' ' + dDate.getDate()}</div>
-                                <div class="flex items-center gap-2"><div class="${dInfo.color}"><i data-lucide="${dInfo.icon}" class="w-5 h-5"></i></div><span class="text-[11px] opacity-80">${dInfo.desc}</span></div>
-                                <div class="flex items-center gap-3 text-xs"><span class="text-sky-500 font-medium flex items-center gap-0.5"><i data-lucide="droplet" class="w-3 h-3"></i>${daily.precipitation_probability_max[d]}%</span><span class="font-bold">${Math.round(daily.temperature_2m_max[d])}° <span class="opacity-60 font-normal">/ ${Math.round(daily.temperature_2m_min[d])}°</span></span></div>
-                            `;
-                            dailyContainer.appendChild(row);
-                        }
+                    // 🛠️ บันทึกข้อมูลและเรียกแสดงพยากรณ์ 5 วัน
+                    if (data.daily) {
+                        lastDailyData = data.daily;
+                        renderDailyForecast(data.daily);
                     }
                     lucide.createIcons();
                 }).catch(() => {});
